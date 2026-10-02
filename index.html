@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>오전반 놀이 고르기</title>
+<title>동래래미안아이파크 공동육아 오전반</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
@@ -25,7 +25,7 @@
   --tag:#2c2c2b; --tag-fg:#c7c6c3; --hover:#232323; --pick:#e6e5e3; --pick-fg:#191919;
   --done:#1f2b22; --done-fg:#7fb48f; --warn:#2e2816; --warn-fg:#d8b768; color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.55;padding-inline:16px;padding-block:28px 140px}
+body{word-break:keep-all;overflow-wrap:break-word;text-wrap:pretty;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.55;padding-inline:16px;padding-block:28px 140px}
 .wrap{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:32px;align-items:start}
 header{grid-column:1/-1;display:flex;flex-direction:column;gap:6px}
 h1{font-size:28px;font-weight:700;margin:0;letter-spacing:-.01em;text-wrap:balance}
@@ -91,6 +91,10 @@ aside h2{margin:0;font-size:16px;font-weight:600}
 }
 @media (prefers-reduced-motion:no-preference){.card,.chip{transition:background .12s,border-color .12s}}
 
+.eyebrow{margin:0;font-size:13.5px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.message{display:flex;flex-direction:column;gap:2px;background:var(--tag);border-radius:var(--r);padding:14px 16px;margin-top:6px;max-width:62ch}
+.message p{margin:0;font-size:15px;line-height:1.65}
+.message b{font-weight:600}
 .slot-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin:0 0 4px}
 .slot-h h2{margin:0;font-size:21px;font-weight:700}
 .slot-h .rule{font-size:13px;color:var(--muted)}
@@ -118,8 +122,13 @@ aside h2{margin:0;font-size:16px;font-weight:600}
 <body>
 <div class="wrap">
   <header>
-    <h1>오전반 놀이 고르기</h1>
-    <p class="sub">한 번에 두 가지만 해요. ① 우리 일 함께하기는 같은 걸 몇 주 반복하고, ② 발달 놀이는 자주 새로 바꿔요. 재료가 겹치게 고르면 준비가 쉬워요.</p>
+    <p class="eyebrow">동래래미안아이파크 공동육아 오전반</p>
+    <h1>오늘은 두 가지만 해 봐요</h1>
+    <div class="message">
+      <p>많은 걸 바라지 않아요. 일단 시도는 해 보자구요.</p>
+      <p>아이가 <b>배웠으면 하는 놀이</b> 하나, <b>경험해 봤으면 하는 놀이</b> 하나. 딱 2개만 해요.</p>
+      <p>자주 보여 주다 보면 조금이라도 변화가 있을 거예요.</p>
+    </div>
     <div class="props">
       <span>대상 <b>12~16개월</b></span>
       <span>장소 <b>아파트 커뮤니티 실내</b></span>
