@@ -138,16 +138,16 @@ aside h2{margin:0;font-size:16px;font-weight:600}
 
   <main>
     <section class="slot" id="habitSlot">
-      <div class="slot-h"><h2>① 우리 일 함께하기</h2><span class="rule">하나 정해서 몇 주 반복해요</span></div>
+      <div class="slot-h"><h2>① 혼자서도 할 수 있어요</h2><span class="rule">하나 정해서 몇 주 반복해요</span></div>
       <div class="intro">
         <p class="intro-q">우리 아기가 배웠으면 하는 생활 속 행동</p>
-        <p>숟가락질, 손 씻기, 빨래 개기, 정리하기처럼 엄마 아빠가 매일 하는 일을 "숟가락 해 볼래?", "이거 넣어 줄래?" 하고 아이에게 맡겨 보는 상황극이에요. 처음엔 관심이 없어도 같은 걸 몇 주 반복하면 아이가 먼저 손을 뻗어요.</p>
+        <p>숟가락질, 손 씻기, 빨래 개기, 정리하기처럼 나중에 아이가 혼자서 하게 될 일들이에요. 지금은 "숟가락 해 볼래?", "이거 넣어 줄래?" 하고 엄마 아빠와 같이 해 봐요. 처음엔 관심이 없어도 같은 걸 몇 주 반복하면 아이가 먼저 손을 뻗어요.</p>
       </div>
       <div class="cards" id="habitCards"></div>
     </section>
 
     <section class="slot" id="devSlot">
-      <div class="slot-h"><h2>② 발달 놀이</h2><span class="rule">자주 바꿔 가며 새로 해요</span></div>
+      <div class="slot-h"><h2>② 새로운 경험</h2><span class="rule">자주 바꿔 가며 새로 해요</span></div>
       <div class="intro">
         <p class="intro-q">우리 아기가 해 봤으면 하는 경험</p>
         <p>상자 터널을 기어서 통과하고, 차가운 얼음을 만지고, 이불 위에서 양말 공을 튀기는 것처럼 집에서는 잘 못 해 본 경험이에요. 매번 새로운 걸 골라 아이가 여러 가지를 겪어 보게 해요.</p>
@@ -156,7 +156,7 @@ aside h2{margin:0;font-size:16px;font-weight:600}
         <p class="label" id="matchLabel"></p>
         <div class="cards" id="matchCards"></div>
       </div>
-      <div class="toolbar" id="cats" role="group" aria-label="발달 놀이 종류"></div>
+      <div class="toolbar" id="cats" role="group" aria-label="새로운 경험 종류"></div>
       <div class="toolbar">
         <button class="chip" id="fresh" aria-pressed="true">안 해 본 것만</button>
         <button class="chip" id="random">🎲 재료 겹치게 짝지어 줘</button>
@@ -213,7 +213,7 @@ aside h2{margin:0;font-size:16px;font-weight:600}
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="plays.js"></script>
 <script>
-const HABIT = '우리 일 함께하기', TIDY = '마무리';
+const HABIT = '혼자서도 할 수 있어요', TIDY = '마무리';
 const DEV_CATS = ['전체', ...CATS.filter(c => c!=='전체' && c!==HABIT && c!==TIDY)];
 const byId = id => PLAYS.find(p => p.id===id);
 const $ = s => document.querySelector(s);
@@ -259,7 +259,7 @@ function render(){
   const matches = h ? devVisible().filter(p => shared(p,h).length) : [];
   $('#match').hidden = !matches.length;
   if(matches.length){
-    $('#matchLabel').textContent = `'${h.name}'와 재료가 겹치는 발달 놀이`;
+    $('#matchLabel').textContent = `'${h.name}'와 재료가 겹치는 새로운 경험`;
     $('#matchCards').innerHTML = matches.map(p => cardHtml(p,'dev')).join('');
   }
 
@@ -275,7 +275,7 @@ function render(){
   renderTray();
 }
 
-function picked(){ return [['① 우리 일', byId(state.habit)], ['② 발달 놀이', byId(state.dev)], ['마무리', tidy]]; }
+function picked(){ return [['① 혼자서도 할 수 있어요', byId(state.habit)], ['② 새로운 경험', byId(state.dev)], ['마무리', tidy]]; }
 function stuffList(){
   const out = [];
   picked().forEach(([,p]) => p && p.items.forEach(i => { if(!out.includes(i)) out.push(i); }));
@@ -313,7 +313,7 @@ document.addEventListener('click', e => {
 });
 $('#fresh').onclick = e => { state.fresh = !state.fresh; e.currentTarget.setAttribute('aria-pressed', state.fresh); render(); };
 $('#random').onclick = () => {
-  // ① 우리 일 함께하기는 고른 게 있으면 그대로 두고(반복), 없으면 하나 골라요. 발달 놀이는 안 해 본 것 중 재료가 가장 많이 겹치는 것
+  // ① 혼자서도 할 수 있어요는 고른 게 있으면 그대로 두고(반복), 없으면 하나 골라요. 발달 놀이는 안 해 본 것 중 재료가 가장 많이 겹치는 것
   if(!state.habit) state.habit = habits[Math.floor(Math.random()*habits.length)].id;
   const h = byId(state.habit);
   const pool = devs.filter(p => !p.used && (state.cat==='전체' || p.cat===state.cat) && p.id!==state.dev);
