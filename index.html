@@ -92,7 +92,7 @@ aside h2{margin:0;font-size:16px;font-weight:600}
 @media (prefers-reduced-motion:no-preference){.card,.chip{transition:background .12s,border-color .12s}}
 
 .eyebrow{margin:0;font-size:13.5px;font-weight:600;color:var(--muted);letter-spacing:.02em}
-.message{display:flex;flex-direction:column;gap:2px;background:var(--tag);border-radius:var(--r);padding:14px 16px;margin-top:6px;max-width:62ch}
+.message{display:flex;flex-direction:column;gap:10px;background:var(--tag);border-radius:var(--r);padding:14px 16px;margin-top:6px;max-width:62ch}
 .message p{margin:0;font-size:15px;line-height:1.65}
 .message b{font-weight:600}
 .fold{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:var(--r);padding:12px 14px;font:inherit;font-size:14.5px;font-weight:600;cursor:pointer;text-align:left}
@@ -103,8 +103,6 @@ aside h2{margin:0;font-size:16px;font-weight:600}
 .fold-body[hidden]{display:none}
 .picked-line{margin:0;font-size:14.5px}
 .picked-line b{font-weight:600}
-/* 설명 문장은 양쪽 맞춤 (한국어는 단어 단위로 끊고, 마지막 줄은 왼쪽 정렬) */
-.message p,.intro p,.how,.sub,p.hint,.op-text{text-align:justify;text-align-last:left;text-wrap:wrap}
 .slot-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin:0 0 4px}
 .slot-h h2{margin:0;font-size:21px;font-weight:700}
 .slot-h .rule{font-size:13px;color:var(--muted)}
@@ -135,9 +133,9 @@ aside h2{margin:0;font-size:16px;font-weight:600}
     <p class="eyebrow">동래래미안아이파크 공동육아 오전반</p>
     <h1>오늘은 두 가지만 해 봐요</h1>
     <div class="message">
-      <p>많은 걸 바라지 않아요. 일단 시도는 해 보자구요.</p>
-      <p>아이가 <b>배웠으면 하는 놀이</b> 하나, <b>경험해 봤으면 하는 놀이</b> 하나. 딱 2개만 해요.</p>
-      <p>자주 보여 주다 보면 조금이라도 변화가 있을 거예요.</p>
+      <p>많은 걸 바라지 않아요.<br>일단 시도는 해 보자구요.</p>
+      <p>아이가 <b>배웠으면 하는 놀이</b> 하나,<br><b>경험해 봤으면 하는 놀이</b> 하나.<br>딱 2개만 해요.</p>
+      <p>자주 보여 주다 보면<br>조금이라도 변화가 있을 거예요.</p>
     </div>
     <div class="props">
       <span>대상 <b>12~16개월</b></span>
