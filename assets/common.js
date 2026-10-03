@@ -216,7 +216,7 @@ function sosSummary(){
     const tabs = days.map((d, i) => { const n = data ? sosDayTotal(data[d]) : 0;
       return `<button type="button" class="sos-tab" data-sos-day="${i}" aria-pressed="${i===sel}">${name(i) || dayLabel(d).replace(' (', ' ').replace(')', '')}${n ? `<small>${n}</small>` : ''}</button>`; }).join('');
     const cells = HOURS.map(h => { const n = t['h'+h] || 0;
-      return `<div class="sos-cell${n ? ' on' : ''}"><b>${h}시</b><span>${n ? n + '명' : '·'}</span></div>`; }).join('');
+      return `<div class="sos-cell${n ? ' on' : ''}"><b>${h}시</b><span>${n}명</span></div>`; }).join('');
     const upcoming = data ? Object.keys(data).filter(d => d > today).sort().map(d => {
       const hs = HOURS.filter(h => data[d]['h'+h]).map(h => `<span class="sos-chip">${h}시 ${data[d]['h'+h]}명</span>`);
       return hs.length ? `<div class="sos-day"><b>${dayLabel(d)}</b><div>${hs.join('')}</div></div>` : '';
@@ -224,6 +224,7 @@ function sosSummary(){
     box.innerHTML = `<div class="sos-top"><p class="sos-h">💇‍♀️ 공동육아 예약 도우미</p><p class="sos-count">${label} SOS <b>${data ? sosDayTotal(t) : 0}</b>명</p></div>
       <div class="sos-tabs" role="group" aria-label="날짜 고르기">${tabs}</div>
       <p class="sos-sub"><b>📅 ${name(sel) ? label + '의' : label} SOS 예약</b>${name(sel) ? ` (${dayLabel(day)})` : ''}</p>
+      <p class="sos-note">👀 시간별로 SOS를 예약한 사람 수예요. 예약은 아래 빨간 버튼에서 해요.</p>
       <div class="sos-today">${cells}</div>
       ${upcoming.length ? `<p class="sos-sub"><b>🗓 다가오는 SOS 예약</b></p><div class="sos-days">${upcoming.join('')}</div>` : ''}
       <a class="sos-btn" href="meet.html#sos">🆘 독박 예정? SOS 예약하기<small>날짜와 시간만 누르면 끝</small></a>`;
