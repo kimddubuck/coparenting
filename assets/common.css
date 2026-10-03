@@ -256,3 +256,9 @@ a.tally{text-decoration:none}
 .ops > li.meet-card{flex-direction:row;gap:14px}
 .date-badge small{color:inherit;opacity:.85}
 main a:not(.btn):not(.menu-card):not(.tally){color:var(--accent-ink)}
+.vote-row{grid-template-columns:repeat(3,1fr)}
+.vote-row .join{padding:8px 4px;white-space:nowrap}
+.vote-row .join[data-vote="maybes"][aria-pressed="false"]:disabled{opacity:.45}
+.vote-row .join[aria-pressed="true"]:not([data-vote="joins"]){background:var(--accent-soft);color:var(--accent-ink);border-color:var(--accent-soft)}
+.comment-toggle{align-self:flex-start;border:0;background:none;padding:2px 0;color:var(--muted);font-weight:600}
+.tally{gap:4px 10px;font-size:13.5px}

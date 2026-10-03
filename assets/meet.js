@@ -4,7 +4,7 @@
 const MEET_TEMPLATE = '장소: \n시간: \n놀이: ';
 const meet = {slot:'오전', col:null, items:[], comments:{}, subs:{}, open:new Set(), drafts:{}};   // drafts: 쓰는 중인 댓글
 
-// '참석' / '불참'은 이 기기에서 둘 중 하나만, 한 번만 (완벽한 막기는 아니에요)
+// '참석' / '미확정' / '불참'은 이 기기에서 둘 중 하나만, 한 번만 (완벽한 막기는 아니에요)
 function choices(){ try{ return JSON.parse(localStorage.getItem('copChoice')||'{}'); }catch(e){ return {}; } }
 function markChoice(id, v){ try{ localStorage.setItem('copChoice', JSON.stringify({...choices(), [id]:v})); }catch(e){} }
 
@@ -43,7 +43,7 @@ function meetCard(o, past){
   meta.append(w, t);
   const p = document.createElement('p'); p.className = 'op-text'; p.textContent = o.text;   // 글은 textContent로만
   const tally = document.createElement('p'); tally.className = 'tally';
-  tally.innerHTML = `<span>🙋 참석 <b>${o.joins || 0}</b>명</span><span>🙅 불참 <b>${o.nos || 0}</b>명</span>`;
+  tally.innerHTML = `<span>🙋 참석 <b>${o.joins || 0}</b>명</span><span>🤔 미확정 <b>${o.maybes || 0}</b>명</span><span>🙅 불참 <b>${o.nos || 0}</b>명</span>`;
   body.append(meta, p, tally);
   if(past) return li;
 
@@ -55,10 +55,14 @@ function meetCard(o, past){
   const nb = document.createElement('button'); nb.type = 'button'; nb.className = 'join'; nb.dataset.vote = 'nos'; nb.dataset.id = o.id;
   nb.setAttribute('aria-pressed', mine==='nos'); nb.disabled = !!mine;
   nb.textContent = mine==='nos' ? '🙅 불참했어요' : '🙅 불참';
+  const mb = document.createElement('button'); mb.type = 'button'; mb.className = 'join'; mb.dataset.vote = 'maybes'; mb.dataset.id = o.id;
+  mb.setAttribute('aria-pressed', mine==='maybes'); mb.disabled = !!mine;
+  mb.textContent = mine==='maybes' ? '🤔 미확정했어요' : '🤔 미확정';
   const cb = document.createElement('button'); cb.type = 'button'; cb.className = 'join'; cb.dataset.toggle = o.id;
   cb.setAttribute('aria-expanded', meet.open.has(o.id));
   cb.textContent = `💬 댓글${cs.length ? ' ' + cs.length : ''}`;
-  row.append(jb, nb, cb); body.appendChild(row);
+  cb.className = 'join comment-toggle';
+  row.append(jb, mb, nb); body.append(row, cb);
 
   if(meet.open.has(o.id)){
     const box = document.createElement('div'); box.className = 'comments';
@@ -111,7 +115,7 @@ $('#meetForm').addEventListener('submit', async e => {
   if(!meet.col) return;
   $('#meetSend').disabled = true;
   try{
-    await meet.col.add({topic:'meet', text, date, slot:meet.slot, joins:0, nos:0, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+    await meet.col.add({topic:'meet', text, date, slot:meet.slot, joins:0, maybes:0, nos:0, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
     $('#meetText').value = MEET_TEMPLATE; $('#meetCount').textContent = `${MEET_TEMPLATE.length} / 500`;
     $('#meetMsg').textContent = '모임 요청을 올렸어요! 🙌';
   }catch(err){ $('#meetMsg').textContent = '저장하지 못했어요. 잠시 뒤 다시 눌러 주세요.'; }
