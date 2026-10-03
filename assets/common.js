@@ -95,12 +95,12 @@ function createPicker(root, opts = {}){
     for(let d = 1; d <= days; d++){
       const v = ymd(y,m,d), dow = (first + d - 1) % 7, past = v < today, n = opts.dayBadge ? opts.dayBadge(v) : 0;
       const cls = ['cal-day', dow===0 ? 'sun' : dow===6 ? 'sat' : '', v===today ? 'today' : '', v===st.date ? 'on' : ''].join(' ');
-      html += `<button type="button" class="${cls}" data-date="${v}" ${past ? 'disabled' : ''} aria-pressed="${v===st.date}">${d}<small>${n ? '🆘' + n : v===today ? '오늘' : ''}</small></button>`;
+      html += `<button type="button" class="${cls}" data-date="${v}" ${past ? 'disabled' : ''} aria-pressed="${v===st.date}">${d}<small>${n ? n + '명' : v===today ? '오늘' : ''}</small></button>`;
     }
     root.querySelector('.cal-grid').innerHTML = html;
     root.querySelector('.time-grid').innerHTML = HOURS.map(h => {
       const n = opts.hourBadge ? opts.hourBadge(st.date, h + '시') : 0;
-      return `<button type="button" class="time-btn" data-slot="${h}시" aria-pressed="${st.slot===h+'시'}">${h}:00${n ? `<small>🆘${n}</small>` : ''}</button>`;
+      return `<button type="button" class="time-btn" data-slot="${h}시" aria-pressed="${st.slot===h+'시'}">${h}:00${n ? `<small>${n}명</small>` : ''}</button>`;
     }).join('');
     root.querySelector('.picked-when').textContent = st.date ? (opts.whenText ? opts.whenText(st) : `${dayLabel(st.date)}${st.slot ? ' ' + st.slot : ''}`) : '';
   }
@@ -116,7 +116,7 @@ function createPicker(root, opts = {}){
   return {state: st, render};
 }
 
-/* 🆘 육아 SOS: 날짜와 시간(9~18시)을 골라 "이때 나 힘들어요"를 익명으로 보내요.
+/* 💇‍♀️ 공동육아 예약 도우미(🆘 SOS 예약): 혼자 독박하는 날짜와 시간(9~18시)을 골라 "이때 나 힘들어요"를 익명으로 보내요.
    저장: coparenting_sos/YYYY-MM-DD 문서의 h9 ~ h18 (그 날 그 시간에 SOS 보낸 사람 수).
    달력에는 날짜별 SOS 수, 시간 버튼에는 그 날 시간별 SOS 수가 보여요 → 보고 눈치게임으로 모임 만들기.
    기기당 같은 날짜·시간에는 한 번만. 홈에는 요약(sosSummary)만 보여 줘요. */
@@ -136,25 +136,25 @@ function sosInit(){
   const root = document.querySelector('[data-sos]'); if(!root) return;
   let data = {}, col = null, sent = [];
   try{ sent = JSON.parse(localStorage.getItem('copSosSent') || '[]'); }catch(e){}
-  root.innerHTML = `<div class="sos-top"><p class="sos-h">🐍 육아 SOS</p><p class="sos-count"></p></div>
-    <p class="sos-sub">언제 나 힘들어요? 날짜와 시간을 눌러 SOS를 보내요. 누가 보냈는지는 아무도 몰라요.</p>
+  root.innerHTML = `<div class="sos-top"><p class="sos-h">💇‍♀️ 공동육아 예약 도우미</p><p class="sos-count"></p></div>
+    <p class="sos-sub">혼자 독박하는 날,<br>미용실 예약하듯 SOS를 예약해 두세요.<br>누가 예약했는지는 아무도 몰라요.</p>
     <div class="sos-picker"></div>
     <button type="button" class="sos-btn"></button>
-    <p class="sos-hint">👀 이제 눈치게임! SOS가 몰리는 시간에 용기 낸 한 명이 <a href="#new" class="sos-make">＋ 모임 만들기</a></p>`;
+    <p class="sos-hint">👀 이제 눈치게임! SOS 예약이 몰린 시간에 용기 낸 한 명이 <a href="#new" class="sos-make">＋ 모임 만들기</a></p>`;
   const picker = createPicker(root.querySelector('.sos-picker'), {
     dayBadge: d => sosDayTotal(data[d]),
     hourBadge: (d, slot) => (data[d] || {})['h' + parseInt(slot)] || 0,
-    whenText: st => st.slot ? `${dayLabel(st.date)} ${st.slot} · SOS ${(data[st.date] || {})['h' + parseInt(st.slot)] || 0}번` : `${dayLabel(st.date)} · 시간을 골라 주세요`,
+    whenText: st => st.slot ? `${dayLabel(st.date)} ${st.slot} · 이미 ${(data[st.date] || {})['h' + parseInt(st.slot)] || 0}명이 SOS 예약` : `${dayLabel(st.date)} · 시간을 골라 주세요`,
     onChange: draw
   });
   function draw(){
     const st = picker.state, key = st.slot ? st.date + '-' + st.slot : '', done = key && sent.includes(key);
-    root.querySelector('.sos-count').innerHTML = `오늘 <b>${sosDayTotal(data[todayStr()])}</b>번`;
+    root.querySelector('.sos-count').innerHTML = `오늘 SOS <b>${sosDayTotal(data[todayStr()])}</b>명`;
     const b = root.querySelector('.sos-btn');
     b.disabled = !st.slot || done || !col;
     b.className = 'sos-btn' + (done ? ' done' : '');
-    b.innerHTML = done ? '🫂 토닥토닥, 보냈어요<small>누군가 같은 마음일 거예요</small>'
-      : st.slot ? `🆘 ${dayLabel(st.date)} ${st.slot}, 나 힘들어요<small>누르기만 하면 돼요</small>` : '🆘 시간을 고르면 SOS를 보낼 수 있어요<small>날짜와 시간을 먼저 눌러 주세요</small>';
+    b.innerHTML = done ? '✅ SOS 예약했어요<small>🫂 같은 시간에 독박하는 엄마 아빠가 또 있을 거예요</small>'
+      : st.slot ? `🆘 ${dayLabel(st.date)} ${st.slot} SOS 예약하기<small>누르기만 하면 돼요</small>` : '🆘 SOS 예약하기<small>독박하는 날짜와 시간을 먼저 눌러 주세요</small>';
   }
   col = sosWatch((d, c) => { col = c; if(d) data = d; picker.render(); draw(); });
   draw();
@@ -181,9 +181,9 @@ function sosSummary(){
     const today = todayStr(), up = data ? Object.entries(data).filter(([d]) => d >= today) : [];
     let best = null;
     up.forEach(([d,v]) => HOURS.forEach(h => { const n = v['h'+h] || 0; if(n && (!best || n > best.n)) best = {d, h, n}; }));
-    box.innerHTML = `<div class="sos-top"><p class="sos-h">🐍 육아 SOS</p><p class="sos-count">오늘 <b>${data ? sosDayTotal(data[today]) : 0}</b>번</p></div>
-      <p class="sos-sub">${best ? `가장 SOS가 몰린 때: <b>${dayLabel(best.d)} ${best.h}시 · ${best.n}번</b>` : '힘든 날·시간에 익명으로 SOS를 보내 보세요. 누가 보냈는지 아무도 몰라요.'}</p>
-      <a class="sos-btn" href="meet.html#sos">🆘 나 힘들어요, SOS 보내기<small>날짜와 시간만 누르면 끝</small></a>`;
+    box.innerHTML = `<div class="sos-top"><p class="sos-h">💇‍♀️ 공동육아 예약 도우미</p><p class="sos-count">오늘 SOS <b>${data ? sosDayTotal(data[today]) : 0}</b>명</p></div>
+      <p class="sos-sub">${best ? `SOS 예약이 가장 몰린 때: <b>${dayLabel(best.d)} ${best.h}시 · ${best.n}명</b>` : '혼자 독박하는 날,<br>미용실 예약하듯 SOS를 예약해 두세요.<br>누가 예약했는지 아무도 몰라요.'}</p>
+      <a class="sos-btn" href="meet.html#sos">🆘 독박 예정? SOS 예약하기<small>날짜와 시간만 누르면 끝</small></a>`;
   };
   draw(null);
   sosWatch(d => draw(d));
