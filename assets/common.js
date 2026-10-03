@@ -122,7 +122,7 @@ function createPicker(root, opts = {}){
   return {state: st, render};
 }
 
-/* 💇‍♀️ 공동육아 예약 도우미(🆘 SOS 예약): 혼자 독박하는 날짜와 시간(9~20시)을 골라 "이때 나 힘들어요"를 익명으로 보내요.
+/* 🆘 공동육아 예약 도우미(🆘 SOS 예약): 혼자 독박하는 날짜와 시간(9~20시)을 골라 "이때 나 힘들어요"를 익명으로 보내요.
    저장: coparenting_sos/YYYY-MM-DD 문서의 h9 ~ h20 (그 날 그 시간에 SOS 보낸 사람 수).
    달력에는 날짜별 SOS 수, 시간 버튼에는 그 날 시간별 SOS 수가 보여요 → 보고 눈치게임으로 모임 만들기.
    기기당 같은 날짜·시간에는 한 번만. 홈에는 요약(sosSummary)만 보여 줘요. */
@@ -142,7 +142,7 @@ function sosInit(){
   const root = document.querySelector('[data-sos]'); if(!root) return;
   let data = {}, col = null, sent = [];
   try{ sent = JSON.parse(localStorage.getItem('copSosSent') || '[]'); }catch(e){}
-  root.innerHTML = `<div class="sos-top"><p class="sos-h">💇‍♀️ 공동육아 예약 도우미</p><p class="sos-count"></p></div>
+  root.innerHTML = `<div class="sos-top"><p class="sos-h">🆘 공동육아 예약 도우미</p><p class="sos-count"></p></div>
     <p class="sos-sub">혼자 독박하는 날,<br>미용실 예약하듯 SOS를 예약해 두세요.<br><b>누가 예약했는지는 아무도 몰라요.</b><br>예약이 모이면, 용기 있는 한 명이<br>모임을 만들어 보는 거예요 💪</p>
     <div class="sos-picker"></div>
     <button type="button" class="sos-btn"></button>
@@ -221,10 +221,10 @@ function sosSummary(){
       const hs = HOURS.filter(h => data[d]['h'+h]).map(h => `<span class="sos-chip">${h}시 ${data[d]['h'+h]}명</span>`);
       return hs.length ? `<div class="sos-day"><b>${dayLabel(d)}</b><div>${hs.join('')}</div></div>` : '';
     }).filter(Boolean).slice(0,5) : [];
-    box.innerHTML = `<div class="sos-top"><p class="sos-h">💇‍♀️ 공동육아 예약 도우미</p><p class="sos-count">${label} SOS <b>${data ? sosDayTotal(t) : 0}</b>명</p></div>
+    box.innerHTML = `<div class="sos-top"><p class="sos-h">🆘 공동육아 예약 도우미</p><p class="sos-count">${label} SOS <b>${data ? sosDayTotal(t) : 0}</b>명</p></div>
       <div class="sos-tabs" role="group" aria-label="날짜 고르기">${tabs}</div>
       <p class="sos-sub"><b>📅 ${name(sel) ? label + '의' : label} SOS 예약</b>${name(sel) ? ` (${dayLabel(day)})` : ''}</p>
-      <p class="sos-note">👀 시간별로 SOS를 예약한 사람 수예요. 예약은 아래 빨간 버튼에서 해요.</p>
+      <p class="sos-note">👀 시간별로 SOS를 예약한 사람 수예요.<br>예약은 아래 빨간 버튼에서 해요.</p>
       <div class="sos-today">${cells}</div>
       ${upcoming.length ? `<p class="sos-sub"><b>🗓 다가오는 SOS 예약</b></p><div class="sos-days">${upcoming.join('')}</div>` : ''}
       <a class="sos-btn" href="meet.html#sos">🆘 독박 예정? SOS 예약하기<small>날짜와 시간만 누르면 끝</small></a>`;
