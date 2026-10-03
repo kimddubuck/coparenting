@@ -326,3 +326,6 @@ a.sos-btn{text-decoration:none;text-align:center}
 .sos-cancel{border:1px solid var(--line);background:var(--bg);color:#e0533f;border-radius:999px;padding:5px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
 .sos-cancel:disabled{opacity:.6;cursor:default}
 .sos-sub b{color:var(--fg);font-weight:700}
+.host-tag{font-size:12.5px;font-weight:700;color:var(--accent-ink);background:var(--accent-soft);border-radius:999px;padding:1px 8px}
+.host-tag:empty{display:none}
+.host-input{font:inherit;font-size:15px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%}

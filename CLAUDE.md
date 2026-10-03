@@ -17,6 +17,7 @@
   - 공통 코드: `assets/common.css`, `assets/common.js`(메뉴·Firebase), 페이지별 `assets/play.js`, `assets/board.js`, `assets/meet.js`. `schedule.html`은 meet.html로 넘기는 옛 주소
   - 게시판 Firestore 규칙은 `의견게시판_설정.md`
   - 웹앱 설치: `manifest.webmanifest`, `sw.js`(캐시 안 함, 설치 조건용), 아이콘 `assets/icon-*.png`. 홈 아래 📲 설치 안내(안드로이드 크롬 / 아이폰 크롬·사파리)
+  - SOS는 익명 눈치게임, 모임은 주최자 별명(host)을 걸고 여는 것. 모임 만들 때 주최자 이름 필수(지난번 이름 기억)
   - 🆘 육아 SOS (모임 페이지): 달력에서 날짜 + 9~18시 시간을 눌러 익명으로 '나 힘들어요' 보내기. 달력엔 날짜별, 시간 버튼엔 시간별 SOS 수. Firestore coparenting_sos/날짜 의 hN. 홈엔 요약만. '＋ 모임 만들기'를 누르면 고른 날짜·시간이 모임 양식에 채워짐
   - 달력+시간 고르기는 common.js의 createPicker 하나를 모임·SOS가 같이 씀
   - 입장 비밀번호: `assets/gate.js` (모든 페이지 head에서 먼저 불러옴). 비밀번호 원문은 저장소에 적지 않고 SHA-256 지문(GATE_HASH)만 둠. 바꿀 때는 새 비밀번호를 NFC로 정규화해 SHA-256을 계산해 GATE_HASH만 교체. 한 번 통과하면 그 브라우저 localStorage(copEntry)에 기억됨. 링크를 우연히 연 사람을 막는 수준이고 진짜 보안은 아님

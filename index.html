@@ -37,9 +37,9 @@
       <a href="board.html#write"><span aria-hidden="true">✏️</span>글쓰기</a>
     </nav>
 
-    <a class="anon-box anon-link" href="meet.html#new">
-      <p class="anon-h">🤫 모임은 익명으로 부담 없이</p>
-      <p>시간 될 때 편하게 올려 보세요.<br>누가 올렸는지 모르니, 아무도 없으면<br>조용히 넘어가면 돼요. ›</p>
+    <a class="anon-box anon-link" href="meet.html#sos">
+      <p class="anon-h">🤫 SOS는 익명, 💪 모임은 용기</p>
+      <p>독박하는 날 SOS 예약은<br>누가 했는지 아무도 몰라요.<br>SOS가 몰리면, 용기 낸 한 명이 모임을 열어요. ›</p>
     </a>
 
     <section class="sec">
@@ -118,7 +118,8 @@ watchMeets(list => {
     const t = document.createElement('p'); t.className = 'op-text'; t.textContent = o.text;   // 글은 textContent로만
     const n = document.createElement('a'); n.className = 'tally'; n.href = 'meet.html';
     n.innerHTML = `<span>참석 <b>${o.joins || 0}</b></span><span>미확정 <b>${o.maybes || 0}</b></span><span>불참 <b>${o.nos || 0}</b></span>`;
-    body.append(w, t, n); li.append(dateBadge(o.date), body); ul.appendChild(li);
+    const hs = document.createElement('span'); hs.className = 'host-tag'; hs.textContent = o.host ? `👑 ${o.host} 주최` : '';
+    body.append(w, hs, t, n); li.append(dateBadge(o.date), body); ul.appendChild(li);
   });
   $('#nextEmpty').textContent = list.length ? '' : '아직 올라온 모임이 없어요. 같이 놀고 싶은 날을 올려 주세요.';
 });

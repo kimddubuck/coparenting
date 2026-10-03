@@ -1,4 +1,4 @@
-/* 모임 요청 페이지 — 누구나 익명으로 같이 놀 날을 올리고, '나도 갈래요'와 댓글을 남겨요.
+/* 모임 페이지 — 용기 낸 사람이 주최자 이름(별명)을 걸고 모임을 열고, '나도 갈래요'와 댓글을 남겨요.
    저장: coparenting_opinions 컬렉션의 topic 'meet' 글, 댓글은 그 글 아래 comments 컬렉션.
    common.js가 먼저 필요해요. 필요한 Firestore 규칙은 의견게시판_설정.md 참고 */
 const MEET_TEMPLATE = '장소: \n놀이: ';
@@ -41,6 +41,7 @@ function meetCard(o, past){
   w.textContent = `${dayLabel(o.date)} ${o.slot || ''}${o.date===today ? ' · 오늘' : ''}`;
   const t = document.createElement('span'); t.textContent = fmtTime(o.createdAt);
   meta.append(w, t);
+  if(o.host){ const hs = document.createElement('span'); hs.className = 'host-tag'; hs.textContent = `👑 ${o.host} 주최`; meta.appendChild(hs); }
   const p = document.createElement('p'); p.className = 'op-text'; p.textContent = o.text;   // 글은 textContent로만
   const tally = document.createElement('p'); tally.className = 'tally';
   tally.innerHTML = `<span>참석 <b>${o.joins || 0}</b></span><span>미확정 <b>${o.maybes || 0}</b></span><span>불참 <b>${o.nos || 0}</b></span>`;
@@ -113,17 +114,19 @@ function openMeetForm(date, slot){
 $('#meetText').addEventListener('input', () => { $('#meetCount').textContent = `${$('#meetText').value.length} / 500`; });
 $('#meetForm').addEventListener('submit', async e => {
   e.preventDefault();
-  const text = $('#meetText').value.trim(), date = meetPicker.state.date;
+  const text = $('#meetText').value.trim(), date = meetPicker.state.date, host = $('#meetHost').value.trim();
   // 양식 칸(장소:/시간:/놀이:)만 남아 있으면 빈 글로 봐요
   if(!date || date < todayStr()){ $('#meetMsg').textContent = '오늘 이후 날짜를 골라 주세요.'; return; }
   if(!meetPicker.state.slot){ $('#meetMsg').textContent = '시간을 골라 주세요.'; return; }
+  if(!host){ $('#meetMsg').textContent = '주최자 이름을 적어 주세요. (예: 하늘맘)'; $('#meetHost').focus(); return; }
   if(!text.replace(/^(장소|시간|놀이):/gm, '').trim()){ $('#meetMsg').textContent = '장소나 놀이를 적어 주세요.'; return; }
   if(!meet.col) return;
   $('#meetSend').disabled = true;
   try{
-    await meet.col.add({topic:'meet', text, date, slot:meetPicker.state.slot, joins:0, maybes:0, nos:0, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+    await meet.col.add({topic:'meet', text, date, slot:meetPicker.state.slot, host, joins:0, maybes:0, nos:0, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
     $('#meetText').value = MEET_TEMPLATE; $('#meetCount').textContent = `${MEET_TEMPLATE.length} / 500`;
-    $('#meetMsg').textContent = '모임 요청을 올렸어요! 🙌';
+    try{ localStorage.setItem('copHost', host); }catch(e){}
+    $('#meetMsg').textContent = '모임을 열었어요! 용기 내 줘서 고마워요 💪';
   }catch(err){ $('#meetMsg').textContent = '저장하지 못했어요. 잠시 뒤 다시 눌러 주세요.'; }
   finally{ $('#meetSend').disabled = false; }
 });
@@ -154,6 +157,7 @@ $('#meetList').addEventListener('submit', async e => {
 });
 
 $('#meetText').value = MEET_TEMPLATE; $('#meetCount').textContent = `${MEET_TEMPLATE.length} / 500`;
+try{ $('#meetHost').value = localStorage.getItem('copHost') || ''; }catch(e){}   // 지난번 주최자 이름을 기억해 둬요
 $('#newToggle').addEventListener('click', () => { $('#meetForm').hidden = !$('#meetForm').hidden; if(!$('#meetForm').hidden) $('#meetText').focus(); });
 if(location.hash==='#new') $('#meetForm').hidden = false;
 if(location.hash==='#sos') setTimeout(() => $('[data-sos]').scrollIntoView({block:'start'}), 50);
