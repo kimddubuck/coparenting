@@ -59,3 +59,6 @@ function watchMeets(cb){
       .sort((a,b) => a.date.localeCompare(b.date) || SLOTS.indexOf(a.slot) - SLOTS.indexOf(b.slot)));
   }, () => cb(null));
 }
+
+// 홈 화면 설치(웹앱)용 서비스 워커 등록 — 캐시는 하지 않아요
+if('serviceWorker' in navigator){ window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); }); }

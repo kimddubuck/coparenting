@@ -267,3 +267,8 @@ main a:not(.btn):not(.menu-card):not(.tally):not(.anon-box){color:var(--accent-i
 .anon-box p{margin:0;font-size:14.5px;line-height:1.6}
 .anon-box .anon-h{font-weight:700;font-size:16px;color:var(--accent-ink)}
 .anon-link:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.install{background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);gap:10px}
+.how-to{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--page)}
+.how-to summary{font-weight:700;cursor:pointer;font-size:15px}
+.how-to ol{margin:10px 0 4px;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:14.5px}
+.how-to .hint{margin-top:6px}

@@ -8,6 +8,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1f9d63">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="동래아">
 <link rel="stylesheet" href="assets/common.css">
 <script src="assets/gate.js"></script>
 </head>
@@ -40,6 +46,31 @@
       <p><a class="btn block" href="meet.html">모임 전체 보기</a></p>
     </section>
 
+    <section class="sec install" id="install">
+      <h2>📲 홈 화면에 앱으로 설치하기</h2>
+      <p class="hint">설치하면 휴대폰 홈 화면에 🐍 아이콘이 생겨서 앱처럼 바로 열려요.</p>
+      <button class="btn primary block" type="button" id="installBtn" hidden>📲 지금 설치하기</button>
+      <details class="how-to" id="howAndroid">
+        <summary>🤖 안드로이드 (크롬)</summary>
+        <ol>
+          <li>크롬으로 이 사이트를 열어요.</li>
+          <li>오른쪽 위 <b>⋮ (점 세 개)</b>를 눌러요.</li>
+          <li><b>홈 화면에 추가</b> 또는 <b>앱 설치</b>를 눌러요.</li>
+          <li><b>설치</b>를 누르면 끝! 홈 화면에 🐍 동래아 아이콘이 생겨요.</li>
+        </ol>
+      </details>
+      <details class="how-to" id="howIos">
+        <summary>🍎 아이폰 (크롬 · 사파리)</summary>
+        <ol>
+          <li><b>크롬</b>: 주소창 오른쪽의 <b>공유 버튼 (⬆︎ 네모에 화살표)</b>을 눌러요.<br><b>사파리</b>: 아래쪽 가운데 <b>공유 버튼</b>을 눌러요.</li>
+          <li>목록을 아래로 내려 <b>홈 화면에 추가</b>를 눌러요.</li>
+          <li>오른쪽 위 <b>추가</b>를 누르면 끝! 홈 화면에 🐍 동래아 아이콘이 생겨요.</li>
+        </ol>
+        <p class="hint">아이폰은 설치한 앱을 처음 열 때 입장 비밀번호를 한 번 더 물어볼 수 있어요.</p>
+      </details>
+      <p class="hint">카카오톡에서 링크를 열었다면, 오른쪽 위 메뉴에서 <b>다른 브라우저로 열기</b>를 먼저 눌러 주세요.</p>
+    </section>
+
     <section class="sec" id="about">
       <h2>이런 모임이에요</h2>
       <ul class="list">
@@ -55,6 +86,22 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="assets/common.js"></script>
 <script>
+// 📲 설치 안내: 이미 앱으로 열었으면 숨기고, 내 휴대폰 종류의 안내를 먼저 펼쳐요
+(function installGuide(){
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  if(standalone){ $('#install').hidden = true; return; }
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  (ios ? $('#howIos') : $('#howAndroid')).open = true;
+  // 안드로이드 크롬은 버튼 하나로 바로 설치할 수 있을 때가 있어요
+  let deferred = null;
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; $('#installBtn').hidden = false; });
+  $('#installBtn').addEventListener('click', async () => {
+    if(!deferred) return;
+    deferred.prompt(); await deferred.userChoice.catch(() => {}); deferred = null; $('#installBtn').hidden = true;
+  });
+  window.addEventListener('appinstalled', () => { $('#install').hidden = true; });
+})();
+
 // 홈: 다가오는 모임 요청 3개
 watchMeets(list => {
   const ul = $('#next'); ul.innerHTML = '';
