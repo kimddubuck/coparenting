@@ -137,10 +137,11 @@ function sosInit(){
   let data = {}, col = null, sent = [];
   try{ sent = JSON.parse(localStorage.getItem('copSosSent') || '[]'); }catch(e){}
   root.innerHTML = `<div class="sos-top"><p class="sos-h">💇‍♀️ 공동육아 예약 도우미</p><p class="sos-count"></p></div>
-    <p class="sos-sub">혼자 독박하는 날,<br>미용실 예약하듯 SOS를 예약해 두세요.<br>누가 예약했는지는 아무도 몰라요.</p>
+    <p class="sos-sub">혼자 독박하는 날,<br>미용실 예약하듯 SOS를 예약해 두세요.<br><b>누가 예약했는지는 아무도 몰라요.</b><br>예약이 모이면,<br>용기 있는 한 명이 모임을 만들어 보는 거예요 💪</p>
     <div class="sos-picker"></div>
     <button type="button" class="sos-btn"></button>
-    <p class="sos-hint">👀 이제 눈치게임! SOS 예약이 몰린 시간에 용기 낸 한 명이 <a href="#new" class="sos-make">＋ 모임 만들기</a></p>`;
+    <div class="sos-mine" hidden></div>
+    <p class="sos-hint">👀 SOS가 몰린 시간을 봤다면? 용기 내서 <a href="#new" class="sos-make">＋ 모임 만들기</a></p>`;
   const picker = createPicker(root.querySelector('.sos-picker'), {
     dayBadge: d => sosDayTotal(data[d]),
     hourBadge: (d, slot) => (data[d] || {})['h' + parseInt(slot)] || 0,
@@ -153,10 +154,25 @@ function sosInit(){
     const b = root.querySelector('.sos-btn');
     b.disabled = !st.slot || done || !col;
     b.className = 'sos-btn' + (done ? ' done' : '');
-    b.innerHTML = done ? '✅ SOS 예약했어요<small>🫂 같은 시간에 독박하는 엄마 아빠가 또 있을 거예요</small>'
+    b.innerHTML = done ? '✅ SOS 예약했어요<small>🫂 아래 "내 SOS 예약"에서 취소할 수 있어요</small>'
       : st.slot ? `🆘 ${dayLabel(st.date)} ${st.slot} SOS 예약하기<small>누르기만 하면 돼요</small>` : '🆘 SOS 예약하기<small>독박하는 날짜와 시간을 먼저 눌러 주세요</small>';
+    // 내 SOS 예약 (이 휴대폰에서 한 것, 오늘 이후만) — 실수로 눌렀으면 여기서 취소
+    const mine = sent.filter(k => k.slice(0,10) >= todayStr()).sort();
+    const box = root.querySelector('.sos-mine'); box.hidden = !mine.length;
+    box.innerHTML = '<p class="sos-mine-h">📌 내 SOS 예약 <small>(이 휴대폰에서만 보여요)</small></p>' + mine.map(k =>
+      `<div class="sos-mine-row"><span>${dayLabel(k.slice(0,10))} ${k.slice(11)}</span><button type="button" class="sos-cancel" data-cancel="${k}">예약 취소</button></div>`).join('');
   }
   col = sosWatch((d, c) => { col = c; if(d) data = d; picker.render(); draw(); });
+  root.querySelector('.sos-mine').addEventListener('click', async e => {
+    const c = e.target.closest('[data-cancel]'); if(!c || !col) return;
+    const key = c.dataset.cancel, date = key.slice(0,10), hk = 'h' + parseInt(key.slice(11));
+    c.disabled = true; c.textContent = '취소 중…';
+    try{
+      if(((data[date] || {})[hk] || 0) > 0) await col.doc(date).update({[hk]: firebase.firestore.FieldValue.increment(-1)});
+      sent = sent.filter(k => k !== key); try{ localStorage.setItem('copSosSent', JSON.stringify(sent)); }catch(err){}
+      draw();
+    }catch(err){ c.disabled = false; c.textContent = '다시 눌러 주세요'; }
+  });
   draw();
   root.querySelector('.sos-btn').addEventListener('click', async () => {
     const st = picker.state; if(!st.slot || !col) return;

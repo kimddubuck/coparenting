@@ -319,3 +319,10 @@ a.sos-btn{text-decoration:none;text-align:center}
 .sos-sub{font-size:13.5px;color:var(--muted);line-height:1.55}
 .cover .lead{font-size:17px}
 .cover-sub{margin:0;font-size:14px;color:var(--muted)}
+.sos-mine{display:flex;flex-direction:column;gap:6px;background:var(--page);border-radius:14px;padding:10px 12px}
+.sos-mine-h{font-weight:700;font-size:14px}
+.sos-mine-h small{font-weight:500;color:var(--muted);font-size:12px}
+.sos-mine-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14.5px;font-weight:600}
+.sos-cancel{border:1px solid var(--line);background:var(--bg);color:#e0533f;border-radius:999px;padding:5px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.sos-cancel:disabled{opacity:.6;cursor:default}
+.sos-sub b{color:var(--fg);font-weight:700}
