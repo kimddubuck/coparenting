@@ -2,8 +2,8 @@
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const WEEK = ['일','월','화','수','목','금','토'];
-const SLOTS = ['오전','점심','오후','저녁'];   // 예전 글의 시간대 (지금은 9시~18시 중에 골라요)
-const HOURS = [9,10,11,12,13,14,15,16,17,18];   // 모임·SOS에서 고를 수 있는 시간
+const SLOTS = ['오전','점심','오후','저녁'];   // 예전 글의 시간대 (지금은 9시~20시 중에 골라요)
+const HOURS = [9,10,11,12,13,14,15,16,17,18,19,20];   // 모임·SOS에서 고를 수 있는 시간
 // 같은 날 모임 정렬용: '10시' → 10, 예전 시간대는 대략적인 시각으로
 function slotOrder(s){ const m = /^(\d+)시$/.exec(s || ''); return m ? +m[1] : ({'오전':9.5,'점심':12.5,'오후':15.5,'저녁':18.5})[s] || 99; }
 
@@ -66,7 +66,7 @@ function watchMeets(cb){
 // 홈 화면 설치(웹앱)용 서비스 워커 등록 — 캐시는 하지 않아요
 if('serviceWorker' in navigator){ window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); }); }
 
-/* ---------- 공용 달력 + 시간(9~18시) 고르기 ----------
+/* ---------- 공용 달력 + 시간(9~20시) 고르기 ----------
    createPicker(root, {months, whenText, dayBadge, hourBadge, onChange})
    - root 안에 달력과 시간 버튼을 그려요. 지난 날은 막고, 이번 달부터 months달까지 넘겨 볼 수 있어요.
    - dayBadge(날짜) / hourBadge(날짜, '10시') 가 숫자를 돌려주면 작게 표시해요 (SOS 수 등). */
@@ -116,8 +116,8 @@ function createPicker(root, opts = {}){
   return {state: st, render};
 }
 
-/* 💇‍♀️ 공동육아 예약 도우미(🆘 SOS 예약): 혼자 독박하는 날짜와 시간(9~18시)을 골라 "이때 나 힘들어요"를 익명으로 보내요.
-   저장: coparenting_sos/YYYY-MM-DD 문서의 h9 ~ h18 (그 날 그 시간에 SOS 보낸 사람 수).
+/* 💇‍♀️ 공동육아 예약 도우미(🆘 SOS 예약): 혼자 독박하는 날짜와 시간(9~20시)을 골라 "이때 나 힘들어요"를 익명으로 보내요.
+   저장: coparenting_sos/YYYY-MM-DD 문서의 h9 ~ h20 (그 날 그 시간에 SOS 보낸 사람 수).
    달력에는 날짜별 SOS 수, 시간 버튼에는 그 날 시간별 SOS 수가 보여요 → 보고 눈치게임으로 모임 만들기.
    기기당 같은 날짜·시간에는 한 번만. 홈에는 요약(sosSummary)만 보여 줘요. */
 function sosWatch(cb){
@@ -190,7 +190,7 @@ function sosInit(){
   });
 }
 
-// 홈: 오늘의 SOS 예약 시간표(9~18시) + 다가오는 날의 예약 목록 + SOS 예약하러 가기
+// 홈: 오늘의 SOS 예약 시간표(9~20시) + 다가오는 날의 예약 목록 + SOS 예약하러 가기
 function sosSummary(){
   const box = document.querySelector('[data-sos-summary]'); if(!box) return;
   // 오늘부터 7일 중 하루를 골라 그날 시간표를 봐요
