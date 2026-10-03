@@ -19,7 +19,7 @@ const GATE_STORY = `        <div class="g-story">
           <li>🆘 <b>힘든 날</b>엔 이름 없이 SOS만 꾹</li>
           <li>👀 SOS가 <b>몰린 시간</b>은 모두가 봐요</li>
           <li>🙌 <b>용기 낸 한 명</b>이 모임을 열어요</li>
-          <li>📲 웹앱이라 <b>홈 화면에 설치</b>해서 앱처럼 써요</li>
+          <li>📲 다운로드 없이 <b>홈 화면 바로가기</b>로 앱처럼</li>
         </ul>`;
 
 function gateCss(){
