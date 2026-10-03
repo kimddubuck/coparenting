@@ -122,6 +122,14 @@ aside h2{margin:0;font-size:16px;font-weight:600}
 .board-form select,.board-form textarea{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:8px 10px;width:100%}
 .board-form textarea{min-height:84px;resize:vertical}
 .board-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.meet-fields{display:flex;flex-wrap:wrap;gap:12px 24px}
+.meet-fields[hidden]{display:none}
+.meet-row{display:flex;flex-direction:column;gap:6px}
+.meet-row input{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:7px 10px}
+.op-when{font-weight:600;color:var(--fg)}
+.op-past{opacity:.55}
+.join{border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:3px 10px;font:inherit;font-size:12.5px;cursor:pointer}
+.join[aria-pressed="true"]{background:var(--pick);color:var(--pick-fg);border-color:var(--pick)}
 .ops{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
 .ops li{padding:12px 2px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
 .ops .op-text{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
@@ -183,16 +191,35 @@ aside h2{margin:0;font-size:16px;font-weight:600}
     </section>
 
     <section class="slot" id="board">
-      <div class="slot-h"><h2>💬 의견 나눠요</h2><span class="rule">이름 없이 남겨져요. 아이 이름은 적지 말아 주세요</span></div>
-      <p class="hint">우리 아기가 배웠으면 하는 행동, 해 봤으면 하는 경험, 해 보니 어땠는지를 자유롭게 적어 주세요. 다음 놀이를 고를 때 반영할게요.</p>
-      <div class="toolbar" id="opTabs" role="group" aria-label="의견 주제">
-        <button class="chip" data-topic="habit" aria-pressed="true">① 배웠으면 하는 생활 속 행동</button>
+      <div class="slot-h"><h2>🤫 익명게시판</h2><span class="rule">이름 없이 남겨져요. 아이 이름은 적지 말아 주세요</span></div>
+      <p class="hint">단톡방에서 말하기 쑥스러운 것도 편하게 적어 주세요. 배웠으면 하는 행동, 해 봤으면 하는 경험, 같이 놀 번개까지 다 좋아요.</p>
+      <div class="toolbar" id="opTabs" role="group" aria-label="게시판 주제">
+        <button class="chip" data-topic="habit" aria-pressed="true">① 배웠으면 하는 행동</button>
         <button class="chip" data-topic="dev" aria-pressed="false">② 해 봤으면 하는 경험</button>
+        <button class="chip" data-topic="meet" aria-pressed="false">⚡ 번개 요청</button>
+        <button class="chip" data-topic="free" aria-pressed="false">💬 자유</button>
       </div>
       <form class="board-form" id="opForm">
-        <label class="label" for="opPlay">어떤 놀이에 대한 의견인가요? (선택)</label>
-        <select id="opPlay"></select>
-        <label class="label" for="opText">의견</label>
+        <div id="playField">
+          <label class="label" for="opPlay">어떤 놀이에 대한 이야기인가요? (선택)</label>
+          <select id="opPlay"></select>
+        </div>
+        <div id="meetFields" class="meet-fields" hidden>
+          <div class="meet-row">
+            <label class="label" for="opDate">날짜</label>
+            <input type="date" id="opDate">
+          </div>
+          <div class="meet-row">
+            <span class="label">시간대</span>
+            <div class="toolbar" id="opSlot" role="group" aria-label="시간대">
+              <button type="button" class="chip" data-slot="오전" aria-pressed="true">오전</button>
+              <button type="button" class="chip" data-slot="점심" aria-pressed="false">점심</button>
+              <button type="button" class="chip" data-slot="오후" aria-pressed="false">오후</button>
+              <button type="button" class="chip" data-slot="저녁" aria-pressed="false">저녁</button>
+            </div>
+          </div>
+        </div>
+        <label class="label" for="opText" id="opTextLabel">내용</label>
         <textarea id="opText" maxlength="500" placeholder=""></textarea>
         <div class="board-row">
           <span class="hint" id="opCount">0 / 500</span>
@@ -365,7 +392,7 @@ $('#bar').onclick = () => openTray($('#tray').classList.contains('closed'));
 openTray(false);
 render();
 
-/* ---------------- 의견 게시판 (Firebase Firestore, 로그인 없이 익명) ----------------
+/* ---------------- 익명게시판 (Firebase Firestore, 로그인 없이 익명) ----------------
    저장 위치: coparenting_opinions 컬렉션. 이름·기기 정보는 저장하지 않아요.
    필요한 Firestore 보안 규칙은 의견게시판_설정.md 참고 */
 const firebaseConfig = {
@@ -377,7 +404,23 @@ const firebaseConfig = {
   appId: "1:1005649043387:web:5386ca629d4dc605992e9e"
 };
 const TOPIC_PLAYS = {habit: () => habits, dev: () => devs};
-const board = {topic:'habit', items:[], col:null};
+const board = {topic:'habit', slot:'오전', items:[], col:null};
+const OP_HINT = {
+  habit:'예: 신발을 스스로 벗어서 정리했으면 좋겠어요. / 숟가락질을 세 번째 하니까 이제 국자를 꽉 잡아요.',
+  dev:'예: 모래나 흙을 만져 보게 하고 싶어요. / 얼음 만질 때 처음엔 놀랐는데 나중엔 웃었어요.',
+  meet:'예: 비 오니까 커뮤니티 실내에서 뽁뽁이 놀이 해요. 편하게 오세요!',
+  free:'예: 요즘 밤에 자주 깨는데 다들 어떻게 하세요? / 오늘 다들 고생 많았어요.'};
+const EMPTY = {habit:'아직 글이 없어요. 첫 글을 남겨 주세요.', dev:'아직 글이 없어요. 첫 글을 남겨 주세요.',
+  meet:'다가오는 번개가 없어요. 같이 놀고 싶은 날을 남겨 주세요.', free:'아직 글이 없어요. 첫 글을 남겨 주세요.'};
+const WEEK = ['일','월','화','수','목','금','토'];
+
+// 오늘 날짜를 YYYY-MM-DD로 (기기 시간 기준)
+function todayStr(){ const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function dayLabel(ymd){ const [y,m,d] = ymd.split('-').map(Number); return `${m}/${d} (${WEEK[new Date(y, m-1, d).getDay()]})`; }
+
+// '나도 갈래요'는 이 기기에서 한 번만 (완벽한 막기는 아니에요)
+function joined(){ try{ return JSON.parse(localStorage.getItem('copJoined')||'[]'); }catch(e){ return []; } }
+function markJoined(id){ try{ localStorage.setItem('copJoined', JSON.stringify([...joined(), id])); }catch(e){} }
 
 function boardInit(){
   try{
@@ -387,21 +430,25 @@ function boardInit(){
     board.col.orderBy('createdAt','desc').limit(300).onSnapshot(snap => {
       board.items = snap.docs.map(d => ({id:d.id, ...d.data()}));
       renderOps();
-    }, () => { $('#opEmpty').textContent = '의견을 불러오지 못했어요. 잠시 뒤 새로고침해 주세요.'; });
+    }, () => { $('#opEmpty').textContent = '글을 불러오지 못했어요. 잠시 뒤 새로고침해 주세요.'; });
   }catch(e){
-    $('#opEmpty').textContent = '인터넷 연결을 확인해 주세요. 의견 기능을 불러오지 못했어요.';
+    $('#opEmpty').textContent = '인터넷 연결을 확인해 주세요. 게시판을 불러오지 못했어요.';
     $('#opSend').disabled = true;
   }
 }
 
-const OP_HINT = {
-  habit:'예: 신발을 스스로 벗어서 정리했으면 좋겠어요. / 숟가락질을 세 번째 하니까 이제 국자를 꽉 잡아요.',
-  dev:'예: 모래나 흙을 만져 보게 하고 싶어요. / 얼음 만질 때 처음엔 놀랐는데 나중엔 웃었어요.'};
 function renderOpTabs(){
-  $('#opText').placeholder = OP_HINT[board.topic];
-  document.querySelectorAll('#opTabs [data-topic]').forEach(b => b.setAttribute('aria-pressed', b.dataset.topic===board.topic));
-  $('#opPlay').innerHTML = '<option value="">놀이 전체 / 기타</option>' +
-    TOPIC_PLAYS[board.topic]().map(p => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('');
+  const t = board.topic;
+  document.querySelectorAll('#opTabs [data-topic]').forEach(b => b.setAttribute('aria-pressed', b.dataset.topic===t));
+  $('#playField').hidden = !TOPIC_PLAYS[t];
+  if(TOPIC_PLAYS[t]) $('#opPlay').innerHTML = '<option value="">놀이 전체 / 기타</option>' +
+    TOPIC_PLAYS[t]().map(p => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('');
+  $('#meetFields').hidden = t!=='meet';
+  if(t==='meet' && !$('#opDate').value){ $('#opDate').value = todayStr(); }
+  $('#opDate').min = todayStr();
+  document.querySelectorAll('#opSlot [data-slot]').forEach(b => b.setAttribute('aria-pressed', b.dataset.slot===board.slot));
+  $('#opTextLabel').textContent = t==='meet' ? '장소·하고 싶은 놀이' : '내용';
+  $('#opText').placeholder = OP_HINT[t];
 }
 
 function fmtDate(ts){
@@ -411,36 +458,71 @@ function fmtDate(ts){
 }
 
 function renderOps(){
-  const list = board.items.filter(o => o.topic===board.topic);
-  $('#opEmpty').textContent = list.length ? '' : '아직 의견이 없어요. 첫 의견을 남겨 주세요.';
+  const t = board.topic, today = todayStr(), mine = joined();
+  let list = board.items.filter(o => o.topic===t);
+  // 번개는 지난 날짜는 숨기고, 가까운 날짜부터
+  if(t==='meet') list = list.filter(o => o.date && o.date >= today)
+    .sort((a,b) => a.date.localeCompare(b.date) || ['오전','점심','오후','저녁'].indexOf(a.slot) - ['오전','점심','오후','저녁'].indexOf(b.slot));
+  $('#opEmpty').textContent = list.length ? '' : EMPTY[t];
   const ul = $('#opList'); ul.innerHTML = '';
   list.forEach(o => {
     const li = document.createElement('li');
     const meta = document.createElement('div'); meta.className = 'op-meta';
-    if(o.play){ const t = document.createElement('span'); t.className = 'tag'; t.textContent = o.play; meta.appendChild(t); }
+    if(t==='meet'){
+      const w = document.createElement('span'); w.className = 'op-when';
+      w.textContent = `⚡ ${dayLabel(o.date)} ${o.slot || ''}${o.date===today ? ' · 오늘' : ''}`;
+      meta.appendChild(w);
+    }
+    if(o.play){ const tg = document.createElement('span'); tg.className = 'tag'; tg.textContent = o.play; meta.appendChild(tg); }
     const when = document.createElement('span'); when.textContent = fmtDate(o.createdAt); meta.appendChild(when);
     const p = document.createElement('p'); p.className = 'op-text'; p.textContent = o.text;   // 글은 textContent로만 넣어요
-    li.append(meta, p); ul.appendChild(li);
+    li.append(meta, p);
+    if(t==='meet'){
+      const done = mine.includes(o.id), n = o.joins || 0;
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'join'; b.dataset.join = o.id;
+      b.setAttribute('aria-pressed', done);
+      b.textContent = done ? `🙋 갈게요 · ${n}명` : (n ? `🙋 나도 갈래요 · ${n}명` : '🙋 나도 갈래요');
+      if(done) b.disabled = true;
+      const row = document.createElement('div'); row.className = 'op-meta'; row.appendChild(b); li.appendChild(row);
+    }
+    ul.appendChild(li);
   });
 }
 
 $('#opTabs').addEventListener('click', e => {
   const b = e.target.closest('[data-topic]'); if(!b) return;
-  board.topic = b.dataset.topic; renderOpTabs(); renderOps();
+  board.topic = b.dataset.topic; $('#opMsg').textContent = ''; renderOpTabs(); renderOps();
+});
+$('#opSlot').addEventListener('click', e => {
+  const b = e.target.closest('[data-slot]'); if(!b) return;
+  board.slot = b.dataset.slot; renderOpTabs();
+});
+$('#opList').addEventListener('click', async e => {
+  const b = e.target.closest('[data-join]'); if(!b || !board.col || joined().includes(b.dataset.join)) return;
+  b.disabled = true;
+  try{
+    await board.col.doc(b.dataset.join).update({joins: firebase.firestore.FieldValue.increment(1)});
+    markJoined(b.dataset.join); renderOps();
+  }catch(err){ b.disabled = false; $('#opEmpty').textContent = '참여 표시를 저장하지 못했어요. 잠시 뒤 다시 눌러 주세요.'; }
 });
 $('#opText').addEventListener('input', () => { $('#opCount').textContent = `${$('#opText').value.length} / 500`; });
 $('#opForm').addEventListener('submit', async e => {
   e.preventDefault();
-  const text = $('#opText').value.trim();
-  if(!text){ $('#opMsg').textContent = '의견을 적어 주세요.'; return; }
+  const t = board.topic, text = $('#opText').value.trim();
+  if(!text){ $('#opMsg').textContent = t==='meet' ? '장소나 하고 싶은 놀이를 적어 주세요.' : '내용을 적어 주세요.'; return; }
   if(!board.col) return;
-  const doc = {topic:board.topic, text, createdAt: firebase.firestore.FieldValue.serverTimestamp()};
-  if($('#opPlay').value) doc.play = $('#opPlay').value;
+  const doc = {topic:t, text, createdAt: firebase.firestore.FieldValue.serverTimestamp()};
+  if(TOPIC_PLAYS[t] && $('#opPlay').value) doc.play = $('#opPlay').value;
+  if(t==='meet'){
+    const date = $('#opDate').value;
+    if(!date || date < todayStr()){ $('#opMsg').textContent = '오늘 이후 날짜를 골라 주세요.'; return; }
+    doc.date = date; doc.slot = board.slot; doc.joins = 0;
+  }
   $('#opSend').disabled = true;
   try{
     await board.col.add(doc);
     $('#opText').value = ''; $('#opCount').textContent = '0 / 500';
-    $('#opMsg').textContent = '남겼어요. 고마워요!';
+    $('#opMsg').textContent = t==='meet' ? '번개를 올렸어요! ⚡' : '남겼어요. 고마워요!';
   }catch(err){
     $('#opMsg').textContent = '저장하지 못했어요. 잠시 뒤 다시 눌러 주세요.';
   }finally{ $('#opSend').disabled = false; }
