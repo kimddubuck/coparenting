@@ -98,7 +98,7 @@ function sosInit(){
         <button type="button" class="sos-btn${done ? ' done' : ''}" ${done || !col ? 'disabled' : ''}>
           ${done ? '🫂 토닥토닥, 보냈어요' : '🆘 나 지금 힘들어요…'}<small>${done ? '누군가 같은 마음일 거예요' : '누르기만 하면 돼요. 누군지 아무도 몰라요'}</small></button>
         <div class="sos-stat"><p class="sos-sub">최근 30일, 언제 SOS가 많을까?</p>${chart()}</div>
-        <p class="sos-hint">같은 시간에 SOS가 많으면 <a href="meet.html#new">＋ 모임 만들기</a>로 직접 모여 봐요!</p>`;
+        <p class="sos-hint">👀 이제 눈치게임! SOS가 몰리는 시간에 용기 낸 한 명이 <a href="meet.html#new">＋ 모임 만들기</a></p>`;
     });
   }
   draw();
