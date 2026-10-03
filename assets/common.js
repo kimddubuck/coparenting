@@ -141,7 +141,7 @@ function sosInit(){
     <div class="sos-picker"></div>
     <button type="button" class="sos-btn"></button>
     <div class="sos-mine" hidden></div>
-    <p class="sos-hint">👀 SOS가 몰린 시간을 봤다면? 용기 내서 <a href="#new" class="sos-make">＋ 모임 만들기</a></p>`;
+    <p class="sos-hint">👀 SOS가 몰린 시간을 봤다면?<br>용기 내서 <a href="#new" class="sos-make">＋ 모임 만들기</a></p>`;
   const picker = createPicker(root.querySelector('.sos-picker'), {
     dayBadge: d => sosDayTotal(data[d]),
     hourBadge: (d, slot) => (data[d] || {})['h' + parseInt(slot)] || 0,

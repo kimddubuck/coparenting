@@ -2,7 +2,7 @@
    저장: coparenting_opinions 컬렉션의 topic 'meet' 글, 댓글은 그 글 아래 comments 컬렉션.
    common.js가 먼저 필요해요. 필요한 Firestore 규칙은 의견게시판_설정.md 참고 */
 const MEET_TEMPLATE = '장소: \n놀이: ';
-const meet = { col:null, items:[], comments:{}, subs:{}, open:new Set(), drafts:{}};   // drafts: 쓰는 중인 댓글
+const meet = { col:null, items:[], comments:{}, subs:{}, open:new Set(), drafts:{}, editing:null, editDraft:''};   // drafts: 쓰는 중인 댓글, editing: 고치는 중인 내 댓글
 
 // '참석' / '미확정' / '불참'은 이 기기에서 둘 중 하나만, 한 번만 (완벽한 막기는 아니에요)
 function choices(){ try{ return JSON.parse(localStorage.getItem('copChoice')||'{}'); }catch(e){ return {}; } }
@@ -35,11 +35,24 @@ function watchComments(){
 function myMeets(){ try{ return JSON.parse(localStorage.getItem('copMyMeets')||'[]'); }catch(e){ return []; } }
 function addMyMeet(id){ try{ localStorage.setItem('copMyMeets', JSON.stringify([...myMeets(), id].slice(-100))); }catch(e){} }
 
+// 내 댓글 열쇠: 댓글을 쓸 때 이 휴대폰에서 비밀값을 만들어 두고, 서버에는 그 지문(sha256)만 저장해요.
+// 고치거나 지울 때 비밀값을 보내 확인하고, 매번 새 비밀값으로 바꿔요 (규칙은 의견게시판_설정.md)
+function comKeys(){ try{ return JSON.parse(localStorage.getItem('copComKeys')||'{}'); }catch(e){ return {}; } }
+function setComKey(cid, k){ try{ const m = comKeys(); m[cid] = k; localStorage.setItem('copComKeys', JSON.stringify(m)); }catch(e){} }
+function newSecret(){ return Array.from(crypto.getRandomValues(new Uint8Array(16)), b => b.toString(16).padStart(2,'0')).join(''); }
+async function sha256hex(t){ const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return Array.from(new Uint8Array(h), b => b.toString(16).padStart(2,'0')).join(''); }
+async function changeComment(mid, cid, data){
+  const k = comKeys()[cid]; if(!k) throw new Error('no key');
+  const next = newSecret();
+  await meet.col.doc(mid).collection('comments').doc(cid).update({...data, k, kh: await sha256hex(next), editedAt: firebase.firestore.FieldValue.serverTimestamp()});
+  setComKey(cid, next);
+}
+
 function meetCard(o, past){
   const li = document.createElement('li'); li.className = 'meet-card' + (past ? ' op-past' : '');
   const body = document.createElement('div'); body.className = 'meet-body';
   li.append(dateBadge(o.date), body);
-  const today = todayStr(), cs = meet.comments[o.id] || [];
+  const today = todayStr(), cs = (meet.comments[o.id] || []).filter(c => !c.deleted);
   const meta = document.createElement('div'); meta.className = 'op-meta';
   const w = document.createElement('span'); w.className = 'op-when';
   w.textContent = `${dayLabel(o.date)} ${o.slot || ''}${o.date===today ? ' · 오늘' : ''}`;
@@ -83,11 +96,24 @@ function meetCard(o, past){
   if(meet.open.has(o.id)){
     const box = document.createElement('div'); box.className = 'comments';
     const ul = document.createElement('ul'); ul.className = 'comment-list';
+    const keys = comKeys();
     cs.forEach(c => {
       const ci = document.createElement('li');
+      if(meet.editing === c.id){
+        const ef = document.createElement('form'); ef.className = 'comment-form comment-edit'; ef.dataset.editComment = c.id; ef.dataset.meet = o.id;
+        ef.innerHTML = `<input type="text" maxlength="300" aria-label="댓글 고치기"><button class="btn primary" type="submit">저장</button><button class="btn" type="button" data-edit-cancel>취소</button>`;
+        ef.querySelector('input').value = meet.editDraft;
+        ci.appendChild(ef); ul.appendChild(ci); return;
+      }
       const ct = document.createElement('span'); ct.textContent = c.text;
-      const cw = document.createElement('small'); cw.textContent = fmtTime(c.createdAt);
-      ci.append(ct, cw); ul.appendChild(ci);
+      const cw = document.createElement('small'); cw.textContent = fmtTime(c.createdAt) + (c.editedAt ? ' · 수정됨' : '');
+      ci.append(ct, cw);
+      if(keys[c.id]){   // 이 휴대폰에서 쓴 댓글만 고치기·지우기
+        const act = document.createElement('span'); act.className = 'comment-act';
+        act.innerHTML = `<button type="button" data-cedit="${c.id}">수정</button><button type="button" data-cdel="${c.id}" data-meet="${o.id}">삭제</button>`;
+        ci.appendChild(act);
+      }
+      ul.appendChild(ci);
     });
     if(!cs.length){ const e = document.createElement('li'); e.className = 'hint'; e.textContent = '아직 댓글이 없어요.'; ul.appendChild(e); }
     const f = document.createElement('form'); f.className = 'comment-form'; f.dataset.comment = o.id;
@@ -114,6 +140,7 @@ function renderMeets(){
 
   document.querySelectorAll('.comment-form').forEach(f => { f.querySelector('input').value = meet.drafts[f.dataset.comment] || ''; });
   if(focusId){ const f = document.querySelector(`.comment-form[data-comment="${focusId}"]`); if(f) f.querySelector('input').focus(); }
+  if(meet.editing){ const ef = document.querySelector(`[data-edit-comment="${meet.editing}"] input`); if(ef && (focusId === null)) ef.focus(); }
 }
 
 /* ---------- 달력 + 시간 고르기 (common.js의 createPicker) ---------- */
@@ -162,6 +189,18 @@ $('#meetList').addEventListener('click', async e => {
     }
     return;
   }
+  const ce = e.target.closest('[data-cedit]');
+  if(ce){ const c = Object.values(meet.comments).flat().find(x => x.id === ce.dataset.cedit);
+    meet.editing = ce.dataset.cedit; meet.editDraft = c ? c.text : ''; renderMeets(); return; }
+  if(e.target.closest('[data-edit-cancel]')){ meet.editing = null; renderMeets(); return; }
+  const cd = e.target.closest('[data-cdel]');
+  if(cd){
+    if(!confirm('이 댓글을 지울까요?')) return;
+    cd.disabled = true;
+    try{ await changeComment(cd.dataset.meet, cd.dataset.cdel, {text:'', deleted:true}); }
+    catch(err){ cd.disabled = false; cd.textContent = '⚠️ 다시'; }
+    return;
+  }
   const tg = e.target.closest('[data-toggle]');
   if(tg){ const id = tg.dataset.toggle; meet.open.has(id) ? meet.open.delete(id) : meet.open.add(id); renderMeets(); return; }
   const b = e.target.closest('[data-vote]'); if(!b || !meet.col || choices()[b.dataset.id]) return;
@@ -171,15 +210,28 @@ $('#meetList').addEventListener('click', async e => {
 });
 $('#meetList').addEventListener('input', e => {
   const f = e.target.closest('[data-comment]'); if(f) meet.drafts[f.dataset.comment] = e.target.value;
+  if(e.target.closest('[data-edit-comment]')) meet.editDraft = e.target.value;
 });
 $('#meetList').addEventListener('submit', async e => {
+  const ef = e.target.closest('[data-edit-comment]');
+  if(ef){
+    e.preventDefault();
+    const text = ef.querySelector('input').value.trim(); if(!text) return;
+    const btn = ef.querySelector('[type=submit]'); btn.disabled = true;
+    try{ await changeComment(ef.dataset.meet, ef.dataset.editComment, {text}); meet.editing = null; renderMeets(); }
+    catch(err){ btn.disabled = false; btn.textContent = '⚠️ 다시 저장'; }
+    return;
+  }
   const f = e.target.closest('[data-comment]'); if(!f) return;
   e.preventDefault();
   const id = f.dataset.comment, text = f.querySelector('input').value.trim();
   if(!text || !meet.col) return;
   meet.drafts[id] = ''; f.querySelector('input').value = '';   // 먼저 비우고, 실패하면 되돌려요
   try{
-    await meet.col.doc(id).collection('comments').add({text, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+    // 화면에 댓글이 먼저 뜨기 전에 열쇠부터 저장해 둬요 (그래야 바로 수정·삭제 버튼이 보여요)
+    const k = newSecret(), ref = meet.col.doc(id).collection('comments').doc();
+    setComKey(ref.id, k);
+    await ref.set({text, kh: await sha256hex(k), createdAt: firebase.firestore.FieldValue.serverTimestamp()});
   }catch(err){
     meet.drafts[id] = text; renderMeets();
     $('#meetEmpty').textContent = '댓글을 저장하지 못했어요. 잠시 뒤 다시 눌러 주세요.';
