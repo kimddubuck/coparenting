@@ -262,3 +262,4 @@ main a:not(.btn):not(.menu-card):not(.tally){color:var(--accent-ink)}
 .vote-row .join[aria-pressed="true"]:not([data-vote="joins"]){background:var(--accent-soft);color:var(--accent-ink);border-color:var(--accent-soft)}
 .comment-toggle{align-self:flex-start;border:0;background:none;padding:2px 0;color:var(--muted);font-weight:600}
 .tally{gap:4px 10px;font-size:13.5px}
+.tally span + span::before{content:"·";margin-right:10px;color:var(--line)}

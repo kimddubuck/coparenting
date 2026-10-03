@@ -61,7 +61,7 @@ watchMeets(list => {
     w.textContent = `${dayLabel(o.date)} ${o.slot || ''}${o.date===todayStr() ? ' · 오늘' : ''}`;
     const t = document.createElement('p'); t.className = 'op-text'; t.textContent = o.text;   // 글은 textContent로만
     const n = document.createElement('a'); n.className = 'tally'; n.href = 'meet.html';
-    n.innerHTML = `<span>🙋 참석 <b>${o.joins || 0}</b>명</span><span>🤔 미확정 <b>${o.maybes || 0}</b>명</span><span>🙅 불참 <b>${o.nos || 0}</b>명</span>`;
+    n.innerHTML = `<span>참석 <b>${o.joins || 0}</b></span><span>미확정 <b>${o.maybes || 0}</b></span><span>불참 <b>${o.nos || 0}</b></span>`;
     body.append(w, t, n); li.append(dateBadge(o.date), body); ul.appendChild(li);
   });
   $('#nextEmpty').textContent = list.length ? '' : '아직 올라온 모임이 없어요. 같이 놀고 싶은 날을 올려 주세요.';

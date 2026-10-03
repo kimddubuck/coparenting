@@ -43,7 +43,7 @@ function meetCard(o, past){
   meta.append(w, t);
   const p = document.createElement('p'); p.className = 'op-text'; p.textContent = o.text;   // 글은 textContent로만
   const tally = document.createElement('p'); tally.className = 'tally';
-  tally.innerHTML = `<span>🙋 참석 <b>${o.joins || 0}</b>명</span><span>🤔 미확정 <b>${o.maybes || 0}</b>명</span><span>🙅 불참 <b>${o.nos || 0}</b>명</span>`;
+  tally.innerHTML = `<span>참석 <b>${o.joins || 0}</b></span><span>미확정 <b>${o.maybes || 0}</b></span><span>불참 <b>${o.nos || 0}</b></span>`;
   body.append(meta, p, tally);
   if(past) return li;
 
