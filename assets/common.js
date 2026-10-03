@@ -143,7 +143,7 @@ function sosInit(){
   let data = {}, col = null, sent = [];
   try{ sent = JSON.parse(localStorage.getItem('copSosSent') || '[]'); }catch(e){}
   root.innerHTML = `<div class="sos-top"><p class="sos-h">💇‍♀️ 공동육아 예약 도우미</p><p class="sos-count"></p></div>
-    <p class="sos-sub">혼자 독박하는 날,<br>미용실 예약하듯 SOS를 예약해 두세요.<br><b>누가 예약했는지는 아무도 몰라요.</b><br>예약이 모이면,<br>용기 있는 한 명이 모임을 만들어 보는 거예요 💪</p>
+    <p class="sos-sub">혼자 독박하는 날,<br>미용실 예약하듯 SOS를 예약해 두세요.<br><b>누가 예약했는지는 아무도 몰라요.</b><br>예약이 모이면, 용기 있는 한 명이<br>모임을 만들어 보는 거예요 💪</p>
     <div class="sos-picker"></div>
     <button type="button" class="sos-btn"></button>
     <div class="sos-mine" hidden></div>
@@ -152,7 +152,7 @@ function sosInit(){
     dayBadge: d => sosDayTotal(data[d]),
     hourBadge: (d, slot) => (data[d] || {})['h' + parseInt(slot)] || 0,
     multi: true,
-    whenText: st => st.slots.length ? `${dayLabel(st.date)} ${st.slots.join('·')} 골랐어요` : `${dayLabel(st.date)} · 시간을 골라 주세요 (여러 개 OK)`,
+    whenText: st => st.slots.length ? `${dayLabel(st.date)} ${st.slots.join('·')} 골랐어요` : `${dayLabel(st.date)} · 시간을 골라 주세요`,
     onChange: draw
   });
   function draw(){
@@ -162,7 +162,7 @@ function sosInit(){
     b.disabled = !keys.length || done || !col;
     b.className = 'sos-btn' + (done ? ' done' : '');
     b.innerHTML = done ? '✅ SOS 예약했어요<small>🫂 아래 "내 SOS 예약"에서 취소할 수 있어요</small>'
-      : keys.length ? `🆘 ${dayLabel(st.date)} ${st.slots.join('·')} SOS 예약하기<small>누르기만 하면 돼요</small>` : '🆘 SOS 예약하기<small>독박하는 날짜와 시간을 먼저 눌러 주세요 (여러 시간 OK)</small>';
+      : keys.length ? `🆘 SOS 예약하기${keys.length > 1 ? ` (${keys.length}개)` : ''}<small>${dayLabel(st.date)} ${st.slots.join('·')}</small>` : '🆘 SOS 예약하기<small>날짜와 시간을 눌러 주세요 · 여러 개 OK</small>';
     // 내 SOS 예약 (이 휴대폰에서 한 것, 오늘 이후만) — 실수로 눌렀으면 여기서 취소
     const mine = sent.filter(k => k.slice(0,10) >= todayStr()).sort();
     const box = root.querySelector('.sos-mine'); box.hidden = !mine.length;
