@@ -193,20 +193,36 @@ function sosInit(){
 // 홈: 오늘의 SOS 예약 시간표(9~18시) + 다가오는 날의 예약 목록 + SOS 예약하러 가기
 function sosSummary(){
   const box = document.querySelector('[data-sos-summary]'); if(!box) return;
+  // 오늘부터 7일 중 하루를 골라 그날 시간표를 봐요
+  const days = Array.from({length:7}, (_, i) => { const d = new Date(); d.setDate(d.getDate() + i);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; });
+  const name = i => i === 0 ? '오늘' : i === 1 ? '내일' : null;
+  let sel = 0, last = null;
   const draw = data => {
-    const today = todayStr(), t = (data && data[today]) || {};
+    last = data;
+    const keep = box.querySelector('.sos-tabs'), sx = keep ? keep.scrollLeft : 0;   // 다시 그려도 날짜 줄 스크롤 위치는 그대로
+    const today = todayStr(), day = days[sel], t = (data && data[day]) || {};
+    const label = name(sel) || dayLabel(day);
+    const tabs = days.map((d, i) => { const n = data ? sosDayTotal(data[d]) : 0;
+      return `<button type="button" class="sos-tab" data-sos-day="${i}" aria-pressed="${i===sel}">${name(i) || dayLabel(d).replace(' (', ' ').replace(')', '')}${n ? `<small>${n}</small>` : ''}</button>`; }).join('');
     const cells = HOURS.map(h => { const n = t['h'+h] || 0;
       return `<div class="sos-cell${n ? ' on' : ''}"><b>${h}시</b><span>${n ? n + '명' : '·'}</span></div>`; }).join('');
     const upcoming = data ? Object.keys(data).filter(d => d > today).sort().map(d => {
       const hs = HOURS.filter(h => data[d]['h'+h]).map(h => `<span class="sos-chip">${h}시 ${data[d]['h'+h]}명</span>`);
       return hs.length ? `<div class="sos-day"><b>${dayLabel(d)}</b><div>${hs.join('')}</div></div>` : '';
     }).filter(Boolean).slice(0,5) : [];
-    box.innerHTML = `<div class="sos-top"><p class="sos-h">💇‍♀️ 공동육아 예약 도우미</p><p class="sos-count">오늘 SOS <b>${data ? sosDayTotal(t) : 0}</b>명</p></div>
-      <p class="sos-sub"><b>📅 오늘의 SOS 예약</b> (${dayLabel(today)})</p>
+    box.innerHTML = `<div class="sos-top"><p class="sos-h">💇‍♀️ 공동육아 예약 도우미</p><p class="sos-count">${label} SOS <b>${data ? sosDayTotal(t) : 0}</b>명</p></div>
+      <div class="sos-tabs" role="group" aria-label="날짜 고르기">${tabs}</div>
+      <p class="sos-sub"><b>📅 ${name(sel) ? label + '의' : label} SOS 예약</b>${name(sel) ? ` (${dayLabel(day)})` : ''}</p>
       <div class="sos-today">${cells}</div>
       ${upcoming.length ? `<p class="sos-sub"><b>🗓 다가오는 SOS 예약</b></p><div class="sos-days">${upcoming.join('')}</div>` : ''}
       <a class="sos-btn" href="meet.html#sos">🆘 독박 예정? SOS 예약하기<small>날짜와 시간만 누르면 끝</small></a>`;
+    box.querySelector('.sos-tabs').scrollLeft = sx;
   };
+  box.addEventListener('click', e => {
+    const b = e.target.closest('[data-sos-day]'); if(!b) return;
+    sel = +b.dataset.sosDay; draw(last);
+  });
   draw(null);
   sosWatch(d => draw(d));
 }
