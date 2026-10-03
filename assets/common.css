@@ -272,3 +272,23 @@ main a:not(.btn):not(.menu-card):not(.tally):not(.anon-box){color:var(--accent-i
 .how-to summary{font-weight:700;cursor:pointer;font-size:15px}
 .how-to ol{margin:10px 0 4px;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:14.5px}
 .how-to .hint{margin-top:6px}
+/* 모임 만들기: 달력 + 시간 */
+.picker{display:flex;flex-direction:column;gap:10px}
+.cal-head{display:flex;align-items:center;justify-content:center;gap:18px}
+.cal-head b{font-size:20px;font-variant-numeric:tabular-nums}
+.cal-nav{border:0;background:none;color:var(--fg);font-size:26px;line-height:1;padding:2px 10px;cursor:pointer;border-radius:8px}
+.cal-nav:disabled{opacity:.25;cursor:default}
+.cal-week,.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal-week span{font-size:13px;color:var(--muted);padding:4px 0}
+.cal-week .sun,.cal-day.sun{color:#e05252}
+.cal-week .sat,.cal-day.sat{color:#3d7be0}
+.cal-day{border:0;background:none;color:var(--fg);font:inherit;font-size:16px;font-weight:600;border-radius:12px;padding:8px 0;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer;font-variant-numeric:tabular-nums}
+.cal-day small{font-size:10.5px;font-weight:600}
+.cal-day:disabled{color:var(--muted);opacity:.45;cursor:default}
+.cal-day.today:not(.on){box-shadow:inset 0 0 0 1.5px var(--pick)}
+.cal-day.on{background:var(--pick);color:var(--pick-fg)}
+.cal-day:focus-visible,.time-btn:focus-visible,.cal-nav:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.time-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.time-btn{border:1px solid var(--line);background:var(--bg);color:var(--fg);font:inherit;font-size:15px;font-weight:600;border-radius:12px;padding:12px 0;cursor:pointer;font-variant-numeric:tabular-nums}
+.time-btn[aria-pressed="true"]{background:var(--pick);color:var(--pick-fg);border-color:var(--pick)}
+.picked-when{margin:0;font-weight:700;color:var(--accent-ink);text-align:center;min-height:1.4em}

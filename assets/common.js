@@ -2,7 +2,10 @@
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const WEEK = ['일','월','화','수','목','금','토'];
-const SLOTS = ['오전','점심','오후','저녁'];
+const SLOTS = ['오전','점심','오후','저녁'];   // 예전 글의 시간대 (지금은 9시~18시 중에 골라요)
+const HOURS = [9,10,11,12,13,14,15,16,17,18];
+// 같은 날 모임 정렬용: '10시' → 10, 예전 시간대는 대략적인 시각으로
+function slotOrder(s){ const m = /^(\d+)시$/.exec(s || ''); return m ? +m[1] : ({'오전':9.5,'점심':12.5,'오후':15.5,'저녁':18.5})[s] || 99; }
 
 // 오늘 날짜를 YYYY-MM-DD로 (기기 시간 기준)
 function todayStr(){ const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
@@ -56,7 +59,7 @@ function watchMeets(cb){
     const today = todayStr();
     cb(snap.docs.map(d => ({id:d.id, ...d.data()}))
       .filter(o => o.topic==='meet' && o.date && o.date >= today)
-      .sort((a,b) => a.date.localeCompare(b.date) || SLOTS.indexOf(a.slot) - SLOTS.indexOf(b.slot)));
+      .sort((a,b) => a.date.localeCompare(b.date) || slotOrder(a.slot) - slotOrder(b.slot)));
   }, () => cb(null));
 }
 
