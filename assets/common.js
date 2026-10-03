@@ -30,7 +30,7 @@ const NAV = [['index.html','home','🏠','홈'],['meet.html','meet','🙌','모�
     NAV.map(([href,key,icon,label]) => `<a href="${href}"${key===cur ? ' aria-current="page"' : ''}><span class="ti" aria-hidden="true">${icon}</span><span>${label}</span></a>`).join('') + '</div>';
 })();
 
-/* Firebase (성장노트와 같은 프로젝트) — 익명게시판·번개 글이 저장되는 곳
+/* Firebase (성장노트와 같은 프로젝트) — 익명게시판·모임 요청 글이 저장되는 곳
    필요한 Firestore 보안 규칙은 의견게시판_설정.md 참고 */
 const firebaseConfig = {
   apiKey: "AIzaSyC-dKd4u8cHn5lvC9EU5ZiXLY07HQ1oCiI",
