@@ -21,18 +21,18 @@
     </section>
 
     <section class="sec">
-      <h2>다가오는 일정</h2>
+      <h2>다가오는 모임</h2>
       <ul class="events" id="next"></ul>
-      <p class="hint" id="nextEmpty" hidden>정해진 일정이 아직 없어요.</p>
-      <p><a class="btn" href="schedule.html">전체 일정·공지 보기</a></p>
+      <p class="hint" id="nextEmpty"></p>
+      <p><a class="btn" href="meet.html">🙌 모임 요청 보러 가기</a></p>
     </section>
 
     <section class="sec">
       <h2>둘러보기</h2>
       <div class="menu-cards">
-        <a class="menu-card" href="schedule.html"><b>📅 일정·공지</b><span>모임 날짜, 공지 이미지, 지난 모임 기록</span></a>
+        <a class="menu-card" href="meet.html"><b>🙌 모임 요청</b><span>같이 놀 날 올리기, 참석·불참, 댓글</span></a>
         <a class="menu-card" href="play.html"><b>🧸 놀이 고르기</b><span>배웠으면 하는 행동 하나, 해 봤으면 하는 경험 하나</span></a>
-        <a class="menu-card" href="board.html"><b>🤫 익명게시판</b><span>쑥스러운 이야기, 놀이 의견, ⚡ 번개 요청</span></a>
+        <a class="menu-card" href="board.html"><b>🤫 익명게시판</b><span>쑥스러운 이야기, 놀이 의견, 자유 수다</span></a>
       </div>
     </section>
 
@@ -60,19 +60,23 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="schedule.js"></script>
 <script src="assets/common.js"></script>
-<script src="assets/schedule.js"></script>
 <script>
-// 홈: 정기 모임과 번개를 합쳐 가까운 3개만
-const nextPlans = sortedSchedule().filter(e => e.date >= todayStr());
-function renderNext(meets){
-  const ul = $('#next'); ul.innerHTML = nextPlans.slice(0,3).map(e => scheduleItem(e, false)).join('');
-  (meets || []).slice(0, Math.max(0, 3 - nextPlans.length)).forEach(o => ul.appendChild(meetItem(o)));
-  $('#nextEmpty').hidden = ul.children.length > 0;
-}
-renderNext([]);
-watchMeets(list => renderNext(list));
+// 홈: 다가오는 모임 요청 3개
+watchMeets(list => {
+  const ul = $('#next'); ul.innerHTML = '';
+  if(list === null){ $('#nextEmpty').textContent = '모임을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'; return; }
+  list.slice(0,3).forEach(o => {
+    const li = document.createElement('li');
+    const w = document.createElement('span'); w.className = 'when';
+    w.textContent = `🙌 ${dayLabel(o.date)} ${o.slot || ''}${o.date===todayStr() ? ' · 오늘' : ''}`;
+    const t = document.createElement('span'); t.className = 'what'; t.textContent = o.text;   // 글은 textContent로만
+    const n = document.createElement('a'); n.className = 'sub-info'; n.href = 'meet.html';
+    n.textContent = `🙋 참석 ${o.joins || 0}명 · 🙅 불참 ${o.nos || 0}명 · 댓글 보러 가기`;
+    li.append(w, t, n); ul.appendChild(li);
+  });
+  $('#nextEmpty').textContent = list.length ? '' : '아직 올라온 모임이 없어요. 같이 놀고 싶은 날을 올려 주세요.';
+});
 </script>
 </body>
 </html>

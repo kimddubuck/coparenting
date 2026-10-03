@@ -155,7 +155,7 @@ aside h2{margin:0;font-size:16px;font-weight:600}
 .events{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
 .events li{display:flex;flex-direction:column;gap:4px;padding:12px 2px;border-bottom:1px solid var(--line)}
 .events .when{font-weight:600}
-.events .what{color:var(--fg);font-size:14.5px}
+.events .what{color:var(--fg);font-size:14.5px;white-space:pre-wrap}
 .events .sub-info{color:var(--muted);font-size:13px}
 .events a{color:inherit}
 .notice-img{display:block;max-width:100%;width:240px;border:1px solid var(--line);border-radius:var(--r);margin-top:4px}
@@ -166,3 +166,13 @@ a.btn{display:inline-block;text-decoration:none}
 .example[hidden]{display:none}
 .example-card{display:flex;flex-direction:column;gap:6px;align-items:flex-start;border:1px dashed var(--line);border-radius:var(--r);padding:12px;background:var(--tag)}
 .example-card .op-text{margin:0;white-space:pre-wrap;font-size:14.5px}
+.tally{margin:2px 0 0;display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;color:var(--muted)}
+.tally b{color:var(--fg);font-size:15px}
+.comments{display:flex;flex-direction:column;gap:8px;margin-top:4px;padding:10px 12px;background:var(--tag);border-radius:var(--r)}
+.comment-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.comment-list li{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;font-size:14px}
+.comment-list li span{overflow-wrap:anywhere}
+.comment-list small{color:var(--muted);font-size:12px}
+.comment-form{display:flex;gap:8px}
+.comment-form input{flex:1;min-width:0;font:inherit;font-size:14px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:7px 10px}
+.ops .comment-list li{padding:0;border:0;flex-direction:row}

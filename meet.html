@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>모임 요청 · 동래아 공동육아</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
+<link rel="stylesheet" href="assets/common.css">
+</head>
+<body>
+<div class="wrap single">
+  <nav class="site-nav" id="siteNav" data-page="meet" aria-label="메뉴"></nav>
+  <main>
+    <header class="page-h">
+      <h1>🙌 모임 요청</h1>
+      <p class="sub">같이 놀고 싶은 날이 있으면 누구든지 편하게 올려 주세요. 이름 없이 남겨져요.</p>
+    </header>
+
+    <section class="sec">
+      <form class="board-form" id="meetForm">
+        <div class="example">
+          <p class="label">이렇게 올리면 돼요 (예시)</p>
+          <div class="example-card">
+            <span class="op-when">🙌 10/7 (수) 오전</span>
+            <p class="op-text">장소: 2단지 커뮤니티
+시간: 10시쯤
+놀이: 뽁뽁이 놀이 해요 (준비물 없어도 OK)</p>
+            <p class="tally"><span>🙋 참석 <b>3</b>명</span><span>🙅 불참 <b>1</b>명</span></p>
+            <p class="op-text" style="font-size:13.5px">💬 "저는 11시쯤 갈 수 있어요"</p>
+          </div>
+        </div>
+        <div class="meet-fields">
+          <div class="meet-row">
+            <label class="label" for="meetDate">날짜</label>
+            <input type="date" id="meetDate">
+          </div>
+          <div class="meet-row">
+            <span class="label">시간대</span>
+            <div class="toolbar" id="meetSlot" role="group" aria-label="시간대">
+              <button type="button" class="chip" data-slot="오전" aria-pressed="true">오전</button>
+              <button type="button" class="chip" data-slot="점심" aria-pressed="false">점심</button>
+              <button type="button" class="chip" data-slot="오후" aria-pressed="false">오후</button>
+              <button type="button" class="chip" data-slot="저녁" aria-pressed="false">저녁</button>
+            </div>
+          </div>
+        </div>
+        <label class="label" for="meetText">장소·시간·놀이</label>
+        <textarea id="meetText" maxlength="500"></textarea>
+        <div class="board-row">
+          <span class="hint" id="meetCount">0 / 500</span>
+          <button class="btn primary" type="submit" id="meetSend">모임 요청 올리기</button>
+        </div>
+        <p class="toast" id="meetMsg" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section class="sec">
+      <h2>다가오는 모임</h2>
+      <ul class="ops" id="meetList"></ul>
+      <p class="hint" id="meetEmpty"></p>
+    </section>
+
+    <section class="sec" id="pastSec" hidden>
+      <h2>지난 모임</h2>
+      <ul class="ops" id="pastList"></ul>
+    </section>
+  </main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/meet.js"></script>
+</body>
+</html>

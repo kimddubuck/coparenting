@@ -12,9 +12,9 @@
 - `templates/` — 공지 HTML 템플릿, render.py 변환기
 - `output/` — 완성된 공지 PNG/PDF
 - 홈페이지 "동래아 공동육아" (GitHub Pages, 반 구분 없음)
-  - `index.html` 홈(소개·약속·다가오는 일정) / `schedule.html` 일정·공지 / `play.html` 놀이 고르기 / `board.html` 익명게시판(① 행동 / ② 경험 / ⚡ 번개 / 💬 자유)
-  - 데이터: 놀이는 `plays.js`, 모임 일정·공지 이미지는 `schedule.js` — 새 회차 공지를 만들면 schedule.js에 한 줄 추가하고 plays.js의 `used`도 적기
-  - 공통 코드: `assets/common.css`, `assets/common.js`(메뉴·Firebase), 페이지별 `assets/play.js`, `assets/board.js`, `assets/schedule.js`
+  - `index.html` 홈(소개·약속·다가오는 모임) / `meet.html` 모임 요청(누구나 날짜·장소 올리기, 참석·불참, 댓글) / `play.html` 놀이 고르기 / `board.html` 익명게시판(① 행동 / ② 경험 / 💬 자유)
+  - 데이터: 놀이는 `plays.js` (공지를 낸 놀이는 `used`에 날짜 적기). 모임 요청·게시판 글은 Firestore
+  - 공통 코드: `assets/common.css`, `assets/common.js`(메뉴·Firebase), 페이지별 `assets/play.js`, `assets/board.js`, `assets/meet.js`. `schedule.html`은 meet.html로 넘기는 옛 주소
   - 게시판 Firestore 규칙은 `의견게시판_설정.md`
 - `ideas/어린이집_응용_목록.md` — 어린이집 활동을 집 생활용품으로 바꾼 목록. 새 회차는 여기서 고르고, 쓴 회차를 표시
 - `ideas/외부자료_응용_목록.md`, `ideas/생활연습_놀이.md` — 공공·해외 자료(원문 미확인), 생활 연습 놀이 목록

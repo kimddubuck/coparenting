@@ -6,10 +6,16 @@ const SLOTS = ['오전','점심','오후','저녁'];
 
 // 오늘 날짜를 YYYY-MM-DD로 (기기 시간 기준)
 function todayStr(){ const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+// 글 올린 시각 (아직 서버 시각이 안 붙었으면 '방금')
+function fmtTime(ts){
+  if(!ts || !ts.toDate) return '방금';
+  const d = ts.toDate();
+  return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
 function dayLabel(ymd){ const [y,m,d] = ymd.split('-').map(Number); return `${m}/${d} (${WEEK[new Date(y, m-1, d).getDay()]})`; }
 
 /* 위쪽 메뉴: 페이지마다 <nav id="siteNav" data-page="..."> 만 두면 여기서 채워요 */
-const NAV = [['index.html','home','홈'],['schedule.html','schedule','일정·공지'],['play.html','play','놀이 고르기'],['board.html','board','익명게시판']];
+const NAV = [['index.html','home','홈'],['meet.html','meet','모임 요청'],['play.html','play','놀이 고르기'],['board.html','board','익명게시판']];
 (function renderNav(){
   const nav = document.getElementById('siteNav'); if(!nav) return;
   const cur = nav.dataset.page;
@@ -34,4 +40,15 @@ function copCollection(){
     if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     return firebase.firestore().collection('coparenting_opinions');
   }catch(e){ return null; }
+}
+
+// 모임 요청(topic 'meet') 중 오늘 이후 것을 가까운 순으로 cb에 넘겨요. 못 불러오면 null
+function watchMeets(cb){
+  const col = copCollection(); if(!col){ cb(null); return; }
+  col.orderBy('createdAt','desc').limit(300).onSnapshot(snap => {
+    const today = todayStr();
+    cb(snap.docs.map(d => ({id:d.id, ...d.data()}))
+      .filter(o => o.topic==='meet' && o.date && o.date >= today)
+      .sort((a,b) => a.date.localeCompare(b.date) || SLOTS.indexOf(a.slot) - SLOTS.indexOf(b.slot)));
+  }, () => cb(null));
 }
