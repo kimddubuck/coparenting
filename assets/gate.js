@@ -21,7 +21,7 @@ const GATE_KEY = 'copEntry';
     #gate h1{margin:0;font-size:22px}
     #gate p{margin:0;color:var(--muted,#6b7570);font-size:14px}
     #gate input{font:inherit;font-size:16px;padding:12px;border-radius:12px;border:1px solid var(--line,#e2e6e1);background:var(--bg,#fff);color:var(--fg,#1f2a24);text-align:center}
-    #gate button{font:inherit;font-weight:700;font-size:15px;padding:12px;border-radius:12px;border:0;background:var(--pick,#1f9d63);color:var(--pick-fg,#fff);cursor:pointer}
+    #gate button{font:inherit;font-weight:700;font-size:15px;padding:12px;border-radius:12px;border:0;background:var(--pick,#2a9095);color:var(--pick-fg,#fff);cursor:pointer}
     #gate .g-msg{color:#c0392b;min-height:1.2em}`;
   document.head.appendChild(css);
 
