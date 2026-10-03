@@ -4,7 +4,7 @@
    - 비밀번호 자체는 저장소에 적지 않고, SHA-256 지문(GATE_HASH)만 둬요.
      비밀번호를 바꾸려면 새 비밀번호의 지문을 계산해 GATE_HASH만 바꾸면 돼요 (CLAUDE.md 참고).
    - 링크를 우연히 연 사람을 막는 정도예요. 코드를 아는 사람은 우회할 수 있어요. */
-const GATE_HASH = '3f6d95e8107f9f59c33f77cbf3058662078e0e815d22cb0aecee9d44d368d81c';
+const GATE_HASH = 'b2b2f104d32c638903e151a9b20d6e27b41d8c0c84cf8458738f83ca2f1dd744';
 const GATE_KEY = 'copEntry';
 
 (function gate(){
