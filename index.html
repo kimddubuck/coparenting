@@ -28,7 +28,7 @@
       <p class="lead"><b>어린이집 갈 때까지, 우리 같이 버텨 봐요.</b></p>
     </section>
 
-    <div class="sos" data-sos></div>
+    <div class="sos" data-sos-summary></div>
 
     <nav class="quick" aria-label="바로가기">
       <a href="meet.html#new"><span aria-hidden="true">🙌</span>모임 만들기</a>
@@ -88,7 +88,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="assets/common.js"></script>
 <script>
-sosInit();
+sosSummary();
 // 📲 설치 안내: 이미 앱으로 열었으면 숨기고, 내 휴대폰 종류의 안내를 먼저 펼쳐요
 (function installGuide(){
   const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;

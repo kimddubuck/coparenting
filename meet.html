@@ -43,19 +43,8 @@
             <p class="op-text" style="font-size:13.5px">💬 "저는 11시쯤 갈 수 있어요"</p>
           </div>
         </div>
-        <div class="picker">
-          <p class="label">📅 날짜를 골라 주세요</p>
-          <div class="cal-head">
-            <button type="button" class="cal-nav" id="calPrev" aria-label="이전 달">‹</button>
-            <b id="calTitle"></b>
-            <button type="button" class="cal-nav" id="calNext" aria-label="다음 달">›</button>
-          </div>
-          <div class="cal-week" aria-hidden="true"><span class="sun">일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span class="sat">토</span></div>
-          <div class="cal-grid" id="calGrid" role="group" aria-label="날짜"></div>
-          <p class="label">🕘 시간을 골라 주세요</p>
-          <div class="time-grid" id="timeGrid" role="group" aria-label="시간"></div>
-          <p class="picked-when" id="pickedWhen"></p>
-        </div>
+        <p class="label">📅 날짜와 시간을 골라 주세요</p>
+        <div id="meetPicker"></div>
         <label class="label" for="meetText">장소·놀이</label>
         <textarea id="meetText" maxlength="500"></textarea>
         <div class="board-row">

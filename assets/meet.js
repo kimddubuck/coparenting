@@ -2,7 +2,7 @@
    저장: coparenting_opinions 컬렉션의 topic 'meet' 글, 댓글은 그 글 아래 comments 컬렉션.
    common.js가 먼저 필요해요. 필요한 Firestore 규칙은 의견게시판_설정.md 참고 */
 const MEET_TEMPLATE = '장소: \n놀이: ';
-const meet = {slot:null, date:todayStr(), month:null, col:null, items:[], comments:{}, subs:{}, open:new Set(), drafts:{}};   // drafts: 쓰는 중인 댓글
+const meet = { col:null, items:[], comments:{}, subs:{}, open:new Set(), drafts:{}};   // drafts: 쓰는 중인 댓글
 
 // '참석' / '미확정' / '불참'은 이 기기에서 둘 중 하나만, 한 번만 (완벽한 막기는 아니에요)
 function choices(){ try{ return JSON.parse(localStorage.getItem('copChoice')||'{}'); }catch(e){ return {}; } }
@@ -100,45 +100,28 @@ function renderMeets(){
   if(focusId){ const f = document.querySelector(`.comment-form[data-comment="${focusId}"]`); if(f) f.querySelector('input').focus(); }
 }
 
-/* ---------- 달력 + 시간 고르기 ---------- */
-const MAX_MONTHS = 3;   // 이번 달부터 3달까지 고를 수 있어요
-const ymd = (y,m,d) => `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-function renderPicker(){
-  const today = todayStr(), [ty,tm] = today.split('-').map(Number);
-  if(!meet.month) meet.month = {y:ty, m:tm};
-  const {y, m} = meet.month;
-  $('#calTitle').textContent = `${y}.${String(m).padStart(2,'0')}`;
-  const idx = (y - ty) * 12 + (m - tm);
-  $('#calPrev').disabled = idx <= 0; $('#calNext').disabled = idx >= MAX_MONTHS - 1;
-  const first = new Date(y, m-1, 1).getDay(), days = new Date(y, m, 0).getDate();
-  let html = '';
-  for(let i = 0; i < first; i++) html += '<span></span>';
-  for(let d = 1; d <= days; d++){
-    const v = ymd(y,m,d), dow = (first + d - 1) % 7, past = v < today;
-    const cls = ['cal-day', dow===0 ? 'sun' : dow===6 ? 'sat' : '', v===today ? 'today' : '', v===meet.date ? 'on' : ''].join(' ');
-    html += `<button type="button" class="${cls}" data-date="${v}" ${past ? 'disabled' : ''} aria-pressed="${v===meet.date}">${d}${v===today ? '<small>오늘</small>' : ''}</button>`;
-  }
-  $('#calGrid').innerHTML = html;
-  $('#timeGrid').innerHTML = HOURS.map(h => `<button type="button" class="time-btn" data-slot="${h}시" aria-pressed="${meet.slot===h+'시'}">${h}:00</button>`).join('');
-  $('#pickedWhen').textContent = meet.date ? `${dayLabel(meet.date)}${meet.slot ? ' ' + meet.slot : ''}에 모여요` : '';
+/* ---------- 달력 + 시간 고르기 (common.js의 createPicker) ---------- */
+const meetPicker = createPicker($('#meetPicker'), {whenText: st => `${dayLabel(st.date)}${st.slot ? ' ' + st.slot : ''}에 모여요`});
+// SOS에서 '＋ 모임 만들기'를 누르면 고른 날짜·시간을 채워서 열어요
+function openMeetForm(date, slot){
+  if(date && date >= todayStr()){ meetPicker.state.date = date; const [y,m] = date.split('-').map(Number); meetPicker.state.month = {y,m}; }
+  if(slot) meetPicker.state.slot = slot;
+  meetPicker.render(); $('#meetForm').hidden = false;
+  $('#meetForm').scrollIntoView({behavior:'smooth', block:'start'});
 }
-$('#calPrev').addEventListener('click', () => { let {y,m} = meet.month; m--; if(m < 1){ m = 12; y--; } meet.month = {y,m}; renderPicker(); });
-$('#calNext').addEventListener('click', () => { let {y,m} = meet.month; m++; if(m > 12){ m = 1; y++; } meet.month = {y,m}; renderPicker(); });
-$('#calGrid').addEventListener('click', e => { const b = e.target.closest('[data-date]'); if(!b || b.disabled) return; meet.date = b.dataset.date; renderPicker(); });
-$('#timeGrid').addEventListener('click', e => { const b = e.target.closest('[data-slot]'); if(!b) return; meet.slot = b.dataset.slot; renderPicker(); });
 
 $('#meetText').addEventListener('input', () => { $('#meetCount').textContent = `${$('#meetText').value.length} / 500`; });
 $('#meetForm').addEventListener('submit', async e => {
   e.preventDefault();
-  const text = $('#meetText').value.trim(), date = meet.date;
+  const text = $('#meetText').value.trim(), date = meetPicker.state.date;
   // 양식 칸(장소:/시간:/놀이:)만 남아 있으면 빈 글로 봐요
   if(!date || date < todayStr()){ $('#meetMsg').textContent = '오늘 이후 날짜를 골라 주세요.'; return; }
-  if(!meet.slot){ $('#meetMsg').textContent = '시간을 골라 주세요.'; return; }
+  if(!meetPicker.state.slot){ $('#meetMsg').textContent = '시간을 골라 주세요.'; return; }
   if(!text.replace(/^(장소|시간|놀이):/gm, '').trim()){ $('#meetMsg').textContent = '장소나 놀이를 적어 주세요.'; return; }
   if(!meet.col) return;
   $('#meetSend').disabled = true;
   try{
-    await meet.col.add({topic:'meet', text, date, slot:meet.slot, joins:0, maybes:0, nos:0, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+    await meet.col.add({topic:'meet', text, date, slot:meetPicker.state.slot, joins:0, maybes:0, nos:0, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
     $('#meetText').value = MEET_TEMPLATE; $('#meetCount').textContent = `${MEET_TEMPLATE.length} / 500`;
     $('#meetMsg').textContent = '모임 요청을 올렸어요! 🙌';
   }catch(err){ $('#meetMsg').textContent = '저장하지 못했어요. 잠시 뒤 다시 눌러 주세요.'; }
@@ -170,9 +153,9 @@ $('#meetList').addEventListener('submit', async e => {
   }
 });
 
-renderPicker();
 $('#meetText').value = MEET_TEMPLATE; $('#meetCount').textContent = `${MEET_TEMPLATE.length} / 500`;
 $('#newToggle').addEventListener('click', () => { $('#meetForm').hidden = !$('#meetForm').hidden; if(!$('#meetForm').hidden) $('#meetText').focus(); });
 if(location.hash==='#new') $('#meetForm').hidden = false;
+if(location.hash==='#sos') setTimeout(() => $('[data-sos]').scrollIntoView({block:'start'}), 50);
 meetInit();
 sosInit();

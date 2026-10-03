@@ -255,7 +255,7 @@ h1{letter-spacing:-.02em}
 a.tally{text-decoration:none}
 .ops > li.meet-card{flex-direction:row;gap:14px}
 .date-badge small{color:inherit;opacity:.85}
-main a:not(.btn):not(.menu-card):not(.tally):not(.anon-box){color:var(--accent-ink)}
+main a:not(.btn):not(.menu-card):not(.tally):not(.anon-box):not(.sos-btn){color:var(--accent-ink)}
 .vote-row{grid-template-columns:repeat(3,1fr)}
 .vote-row .join{padding:8px 4px;white-space:nowrap}
 .vote-row .join[data-vote="maybes"][aria-pressed="false"]:disabled{opacity:.45}
@@ -305,17 +305,15 @@ main a:not(.btn):not(.menu-card):not(.tally):not(.anon-box){color:var(--accent-i
 .sos-btn.done{background:var(--accent-soft);color:var(--accent-ink);box-shadow:none}
 .sos-btn:disabled{cursor:default}
 .sos-btn:focus-visible{outline:2px solid var(--fg);outline-offset:3px}
-.sos-stat{display:flex;flex-direction:column;gap:6px;background:var(--page);border-radius:14px;padding:12px}
-.sos-sub{font-size:13px;color:var(--muted);font-weight:600}
-.sos-chart{display:grid;grid-template-columns:repeat(13,1fr);gap:2px;align-items:end;height:96px}
-.sos-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;height:100%}
-.sos-bar{width:70%;max-width:16px;border-radius:4px 4px 0 0;background:var(--accent-ink);opacity:.35}
-.sos-col.peak .sos-bar{opacity:1}
-.sos-col.now .sos-hr{color:var(--fg);font-weight:700}
-.sos-val{font-size:12px;font-weight:700;color:var(--fg);min-height:14px}
-.sos-hr{font-size:11px;color:var(--muted);min-height:14px;white-space:nowrap}
-.sos-peak{font-size:13px;color:var(--fg)}
-.sos-empty{font-size:13px;color:var(--muted)}
 .sos-hint{font-size:13px;color:var(--muted)}
 .sos-hint a{color:var(--accent-ink);font-weight:700;white-space:nowrap}
 @media (prefers-reduced-motion:no-preference){.sos-btn{transition:transform .1s}}
+.cal-day small{min-height:12px;font-size:10px}
+.cal-day:not(.on) small{color:#e0533f}
+.time-btn{display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 0}
+.time-btn small{font-size:10.5px;font-weight:700;color:#e0533f}
+.time-btn[aria-pressed="true"] small{color:inherit}
+a.sos-btn{text-decoration:none;text-align:center}
+.sos-picker{background:var(--page);border-radius:14px;padding:10px}
+.sos-sub b{color:var(--fg)}
+.sos-sub{font-size:13.5px;color:var(--muted);line-height:1.55}
