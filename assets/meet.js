@@ -75,7 +75,8 @@ function meetCard(o, past){
   row.append(jb, mb, nb); body.append(row, cb);
   if(myMeets().includes(o.id)){
     const x = document.createElement('button'); x.type = 'button'; x.className = 'cancel-meet'; x.dataset.cancelMeet = o.id;
-    x.textContent = meet.confirm===o.id ? '정말 취소할까요? 한 번 더 누르면 취소돼요' : '🗑 내가 연 모임 취소하기';
+    x.textContent = meet.cancelErr && meet.cancelErr.id===o.id ? meet.cancelErr.msg
+      : meet.confirm===o.id ? '정말 취소할까요? 한 번 더 누르면 취소돼요' : '🗑 내가 연 모임 취소하기';
     body.appendChild(x);
   }
 
@@ -151,9 +152,14 @@ $('#meetList').addEventListener('click', async e => {
   if(cm){
     const id = cm.dataset.cancelMeet;
     if(meet.confirm !== id){ meet.confirm = id; renderMeets(); return; }   // 실수 방지: 두 번 눌러야 취소
-    cm.disabled = true; meet.confirm = null;
-    try{ await meet.col.doc(id).update({cancelled: true}); }
-    catch(err){ $('#meetEmpty').textContent = '취소하지 못했어요. 잠시 뒤 다시 눌러 주세요.'; renderMeets(); }
+    cm.disabled = true; cm.textContent = '취소하는 중…'; meet.cancelErr = null;
+    try{ await meet.col.doc(id).update({cancelled: true}); meet.confirm = null; }
+    catch(err){
+      // 실패 문구는 버튼 위에 바로 보여 줘요 (목록 아래 문구는 다시 그릴 때 지워져서 안 보였어요)
+      meet.cancelErr = {id, msg: err && err.code === 'permission-denied'
+        ? '⚠️ 취소가 막혔어요. Firestore 규칙을 새로 게시해 주세요' : '⚠️ 취소하지 못했어요. 한 번 더 눌러 주세요'};
+      renderMeets();
+    }
     return;
   }
   const tg = e.target.closest('[data-toggle]');
