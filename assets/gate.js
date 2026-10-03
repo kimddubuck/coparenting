@@ -7,16 +7,27 @@
 const GATE_HASH = 'b2b2f104d32c638903e151a9b20d6e27b41d8c0c84cf8458738f83ca2f1dd744';
 const GATE_KEY = 'copEntry';
 
-(function gate(){
-  let ok = false;
-  try{ ok = localStorage.getItem(GATE_KEY) === GATE_HASH; }catch(e){}
-  if(ok) return;
-  document.documentElement.classList.add('gate-locked');
+// 첫 화면 이야기(이 앱을 만든 이유) + 3줄 사용법 — 입장 화면과 '소개 다시 보기'가 같이 써요
+const GATE_STORY = `        <div class="g-story">
+          <p class="g-q">"아… 오늘은 또 어떻게 버티지?"</p>
+          <p class="g-sub">아기랑 하루 종일 붙어 있는데<br>시간만 흘러가는 것 같은 날.</p>
+          <p>같이 육아하면 서로 의지도 되고<br>아이에게도 좋은 에너지를<br>줄 수 있을 것 같은데…</p>
+          <p class="g-sub">단톡방에 "모임 해요!" 올리긴 쑥스럽고<br>아이 컨디션 때문에<br>약속을 못 지킬까 걱정되잖아요.</p>
+          <p><b>그래서 만들었어요.</b><br>부담 없이, 되는 사람끼리, 되는 날에.<br>오늘도 으쌰으쌰 같이 이겨내요 💪</p>
+        </div>
+        <ul class="g-how">
+          <li>🆘 <b>힘든 날</b>엔 이름 없이 SOS만 꾹</li>
+          <li>👀 SOS가 <b>몰린 시간</b>은 모두가 봐요</li>
+          <li>🙌 <b>용기 낸 한 명</b>이 모임을 열어요</li>
+        </ul>`;
+
+function gateCss(){
+  if(document.getElementById('gateCss')) return;
   const css = document.createElement('style');
   css.textContent = `
     html.gate-locked body > *:not(#gate){display:none!important}
     #gate{position:fixed;inset:0;display:flex;justify-content:center;overflow-y:auto;padding:24px 16px;background:var(--page,#f3f5f2);z-index:100}
-    #gate form{width:100%;max-width:380px;margin:auto 0;padding:24px 16px!important;display:flex;flex-direction:column;gap:12px;background:var(--bg,#fff);border:1px solid var(--line,#e2e6e1);border-radius:20px;padding:28px 22px;box-shadow:0 2px 14px rgba(20,40,30,.08);text-align:center}
+    #gate .g-card{width:100%;max-width:380px;margin:auto 0;padding:24px 16px!important;display:flex;flex-direction:column;gap:12px;background:var(--bg,#fff);border:1px solid var(--line,#e2e6e1);border-radius:20px;padding:28px 22px;box-shadow:0 2px 14px rgba(20,40,30,.08);text-align:center}
     #gate .g-icon{width:72px;height:72px;margin:0 auto;border-radius:18px;display:block}
     #gate h1{margin:0;font-size:22px}
     #gate p{margin:0;color:var(--muted,#6b7570);font-size:14px}
@@ -29,8 +40,38 @@ const GATE_KEY = 'copEntry';
     #gate .g-story .g-sub{color:var(--muted,#736e75)}
     #gate .g-how{text-align:left;margin:0;padding:0 4px;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.55}
     #gate .g-how b{color:var(--accent-ink,#1c7276)}
+    #gate .g-close{position:absolute;top:10px;right:10px;width:36px;height:36px;padding:0!important;border-radius:50%!important;background:var(--tag,#efefef)!important;color:var(--fg,#22282a)!important;font-size:18px!important}
+    #gate .g-card{position:relative}
     #gate .g-pw{margin-top:4px;border-top:1px solid var(--line,#e3e3e5);padding-top:14px}`;
-  document.head.appendChild(css);
+  css.id = 'gateCss'; document.head.appendChild(css);
+}
+
+// 메뉴의 '📖 소개' 버튼: 비밀번호 없이 첫 화면 이야기만 다시 보여 줘요
+function showIntro(){
+  gateCss();
+  if(document.getElementById('gate')) return;
+  const box = document.createElement('div'); box.id = 'gate'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', '공동육아 SOS 소개');
+  box.innerHTML = `<div class="g-card">
+      <button type="button" class="g-close" aria-label="닫기">✕</button>
+      <img class="g-icon" src="assets/icon.svg" alt="" width="72" height="72">
+      <h1>공동육아 SOS 🆘</h1>
+${GATE_STORY}
+      <button type="button" class="g-ok">시작하기</button>
+    </div>`;
+  const close = () => { box.remove(); document.removeEventListener('keydown', esc); };
+  const esc = e => { if(e.key === 'Escape') close(); };
+  box.addEventListener('click', e => { if(e.target === box || e.target.closest('.g-close, .g-ok')) close(); });
+  document.addEventListener('keydown', esc);
+  document.body.appendChild(box);
+  box.querySelector('.g-ok').focus();
+}
+
+(function gate(){
+  let ok = false;
+  try{ ok = localStorage.getItem(GATE_KEY) === GATE_HASH; }catch(e){}
+  if(ok) return;
+  document.documentElement.classList.add('gate-locked');
+  gateCss();
 
   async function sha256(text){
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
@@ -38,21 +79,10 @@ const GATE_KEY = 'copEntry';
   }
   function show(){
     const box = document.createElement('div'); box.id = 'gate';
-    box.innerHTML = `<form autocomplete="off">
+    box.innerHTML = `<form class="g-card" autocomplete="off">
         <img class="g-icon" src="assets/icon.svg" alt="" width="72" height="72">
         <h1>공동육아 SOS 🆘</h1>
-        <div class="g-story">
-          <p class="g-q">"아… 오늘은 또 어떻게 버티지?"</p>
-          <p class="g-sub">아기랑 하루 종일 붙어 있는데<br>시간만 흘러가는 것 같은 날.</p>
-          <p>같이 육아하면 서로 의지도 되고<br>아이에게도 좋은 에너지를<br>줄 수 있을 것 같은데…</p>
-          <p class="g-sub">단톡방에 "모임 해요!" 올리긴 쑥스럽고<br>아이 컨디션 때문에<br>약속을 못 지킬까 걱정되잖아요.</p>
-          <p><b>그래서 만들었어요.</b><br>부담 없이, 되는 사람끼리, 되는 날에.<br>오늘도 으쌰으쌰 같이 이겨내요 💪</p>
-        </div>
-        <ul class="g-how">
-          <li>🆘 <b>힘든 날</b>엔 이름 없이 SOS만 꾹</li>
-          <li>👀 SOS가 <b>몰린 시간</b>은 모두가 봐요</li>
-          <li>🙌 <b>용기 낸 한 명</b>이 모임을 열어요</li>
-        </ul>
+${GATE_STORY}
         <p class="g-pw">🔑 단톡방 공지의 비밀번호를 넣어 주세요.<br>한 번 들어오면 다음부터 바로 열려요.</p>
         <input type="password" id="gateInput" aria-label="입장 비밀번호" placeholder="비밀번호">
         <button type="submit">들어가기</button>

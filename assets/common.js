@@ -30,7 +30,10 @@ const NAV = [['index.html','home','🏠','홈'],['meet.html','meet','🙌','모�
   const nav = document.getElementById('siteNav'); if(!nav) return;
   const cur = nav.dataset.page;
   nav.innerHTML = `<a class="brand" href="index.html">공동육아 SOS 🆘</a><div class="nav-links">` +
-    NAV.map(([href,key,icon,label]) => `<a href="${href}"${key===cur ? ' aria-current="page"' : ''}><span class="ti" aria-hidden="true">${icon}</span><span>${label}</span></a>`).join('') + '</div>';
+    NAV.map(([href,key,icon,label]) => `<a href="${href}"${key===cur ? ' aria-current="page"' : ''}><span class="ti" aria-hidden="true">${icon}</span><span>${label}</span></a>`).join('') + '</div>' +
+    '<button type="button" class="intro-btn" aria-label="공동육아 SOS 소개 다시 보기">📖 소개</button>';
+  // 첫 화면 이야기 다시 보기 (showIntro는 gate.js)
+  nav.querySelector('.intro-btn').addEventListener('click', () => { if(typeof showIntro === 'function') showIntro(); });
 })();
 
 /* Firebase (성장노트와 같은 프로젝트) — 모임·SOS·놀이 추가가 저장되는 곳

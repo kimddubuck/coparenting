@@ -374,3 +374,8 @@ a.sos-btn{text-decoration:none;text-align:center}
 /* 두 줄로 넘어가도 줄 길이가 비슷하게 */
 .picked-when,.sos-btn,.sos-btn small{text-wrap:balance}
 .cover-icon{width:64px;height:64px;border-radius:16px;display:block}
+/* 메뉴 오른쪽 '📖 소개' (첫 화면 이야기 다시 보기) */
+.site-nav{position:relative}
+.intro-btn{margin-left:auto;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:5px 11px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+.intro-btn:hover{background:var(--hover)}
+@media (max-width:820px){ .intro-btn{position:absolute;right:0;top:50%;transform:translateY(-50%);margin:0} .site-nav{min-height:36px} }
