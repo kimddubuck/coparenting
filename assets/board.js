@@ -65,6 +65,8 @@ $('#opForm').addEventListener('submit', async e => {
     $('#opMsg').textContent = '저장하지 못했어요. 잠시 뒤 다시 눌러 주세요.';
   }finally{ $('#opSend').disabled = false; }
 });
+$('#writeToggle').addEventListener('click', () => { $('#opForm').hidden = !$('#opForm').hidden; if(!$('#opForm').hidden) $('#opText').focus(); });
+if(location.hash==='#write') $('#opForm').hidden = false;
 if(['habit','dev','free'].includes(location.hash.slice(1))) board.topic = location.hash.slice(1);
 renderOpTabs();
 boardInit();

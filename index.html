@@ -14,26 +14,24 @@
 <div class="wrap single">
   <nav class="site-nav" id="siteNav" data-page="home" aria-label="메뉴"></nav>
   <main>
-    <section class="hero">
+    <section class="cover">
+      <span class="emoji" aria-hidden="true">🐍</span>
       <p class="eyebrow">동래래미안아이파크</p>
-      <h1>동래아 공동육아 🐍</h1>
+      <h1>동래아 공동육아</h1>
       <p class="lead">같은 아파트 엄마 아빠가 모여 아이들과 함께 노는 모임이에요.<br><b>어린이집 갈 때까지, 우리 같이 버텨 봐요.</b></p>
     </section>
 
-    <section class="sec">
-      <h2>다가오는 모임</h2>
-      <ul class="events" id="next"></ul>
-      <p class="hint" id="nextEmpty"></p>
-      <p><a class="btn" href="meet.html">🙌 모임 요청 보러 가기</a></p>
-    </section>
+    <nav class="quick" aria-label="바로가기">
+      <a href="meet.html#new"><span aria-hidden="true">🙌</span>모임 만들기</a>
+      <a href="play.html"><span aria-hidden="true">🧸</span>놀이 고르기</a>
+      <a href="board.html#write"><span aria-hidden="true">✏️</span>글쓰기</a>
+    </nav>
 
     <section class="sec">
-      <h2>둘러보기</h2>
-      <div class="menu-cards">
-        <a class="menu-card" href="meet.html"><b>🙌 모임 요청</b><span>같이 놀 날 올리기, 참석·불참, 댓글</span></a>
-        <a class="menu-card" href="play.html"><b>🧸 놀이 고르기</b><span>배웠으면 하는 행동 하나, 해 봤으면 하는 경험 하나</span></a>
-        <a class="menu-card" href="board.html"><b>🤫 익명게시판</b><span>쑥스러운 이야기, 놀이 의견, 자유 수다</span></a>
-      </div>
+      <h2>다가오는 모임</h2>
+      <ul class="ops" id="next"></ul>
+      <p class="hint" id="nextEmpty"></p>
+      <p><a class="btn block" href="meet.html">모임 전체 보기</a></p>
     </section>
 
     <section class="sec" id="about">
@@ -57,13 +55,14 @@ watchMeets(list => {
   const ul = $('#next'); ul.innerHTML = '';
   if(list === null){ $('#nextEmpty').textContent = '모임을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'; return; }
   list.slice(0,3).forEach(o => {
-    const li = document.createElement('li');
-    const w = document.createElement('span'); w.className = 'when';
-    w.textContent = `🙌 ${dayLabel(o.date)} ${o.slot || ''}${o.date===todayStr() ? ' · 오늘' : ''}`;
-    const t = document.createElement('span'); t.className = 'what'; t.textContent = o.text;   // 글은 textContent로만
-    const n = document.createElement('a'); n.className = 'sub-info'; n.href = 'meet.html';
-    n.textContent = `🙋 참석 ${o.joins || 0}명 · 🙅 불참 ${o.nos || 0}명 · 댓글 보러 가기`;
-    li.append(w, t, n); ul.appendChild(li);
+    const li = document.createElement('li'); li.className = 'meet-card';
+    const body = document.createElement('div'); body.className = 'meet-body';
+    const w = document.createElement('span'); w.className = 'op-when';
+    w.textContent = `${dayLabel(o.date)} ${o.slot || ''}${o.date===todayStr() ? ' · 오늘' : ''}`;
+    const t = document.createElement('p'); t.className = 'op-text'; t.textContent = o.text;   // 글은 textContent로만
+    const n = document.createElement('a'); n.className = 'tally'; n.href = 'meet.html';
+    n.innerHTML = `<span>🙋 참석 <b>${o.joins || 0}</b>명</span><span>🙅 불참 <b>${o.nos || 0}</b>명</span><span>💬 댓글 보기 ›</span>`;
+    body.append(w, t, n); li.append(dateBadge(o.date), body); ul.appendChild(li);
   });
   $('#nextEmpty').textContent = list.length ? '' : '아직 올라온 모임이 없어요. 같이 놀고 싶은 날을 올려 주세요.';
 });

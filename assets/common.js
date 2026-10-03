@@ -12,15 +12,22 @@ function fmtTime(ts){
   const d = ts.toDate();
   return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
+// 모임 카드 왼쪽 날짜 배지 (예: 10월 / 7 / 수)
+function dateBadge(ymd){
+  const [y,m,d] = ymd.split('-').map(Number);
+  const el = document.createElement('div'); el.className = 'date-badge' + (ymd===todayStr() ? ' today' : '');
+  el.innerHTML = `<small>${ymd===todayStr() ? '오늘' : m + '월'}</small><b>${d}</b><small>${WEEK[new Date(y, m-1, d).getDay()]}</small>`;
+  return el;
+}
 function dayLabel(ymd){ const [y,m,d] = ymd.split('-').map(Number); return `${m}/${d} (${WEEK[new Date(y, m-1, d).getDay()]})`; }
 
 /* 위쪽 메뉴: 페이지마다 <nav id="siteNav" data-page="..."> 만 두면 여기서 채워요 */
-const NAV = [['index.html','home','홈'],['meet.html','meet','모임 요청'],['play.html','play','놀이 고르기'],['board.html','board','익명게시판']];
+const NAV = [['index.html','home','🏠','홈'],['meet.html','meet','🙌','모임'],['play.html','play','🧸','놀이'],['board.html','board','💬','게시판']];
 (function renderNav(){
   const nav = document.getElementById('siteNav'); if(!nav) return;
   const cur = nav.dataset.page;
   nav.innerHTML = `<a class="brand" href="index.html">동래아 공동육아 🐍</a><div class="nav-links">` +
-    NAV.map(([href,key,label]) => `<a href="${href}"${key===cur ? ' aria-current="page"' : ''}>${label}</a>`).join('') + '</div>';
+    NAV.map(([href,key,icon,label]) => `<a href="${href}"${key===cur ? ' aria-current="page"' : ''}><span class="ti" aria-hidden="true">${icon}</span><span>${label}</span></a>`).join('') + '</div>';
 })();
 
 /* Firebase (성장노트와 같은 프로젝트) — 익명게시판·번개 글이 저장되는 곳

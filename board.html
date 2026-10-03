@@ -22,7 +22,8 @@
         <button class="chip" data-topic="dev" aria-pressed="false">② 해 봤으면 하는 경험</button>
         <button class="chip" data-topic="free" aria-pressed="false">💬 자유</button>
       </div>
-      <form class="board-form" id="opForm">
+      <button class="btn primary block write-toggle" type="button" id="writeToggle">✏️ 글쓰기</button>
+      <form class="board-form" id="opForm" hidden>
         <div id="playField">
           <label class="label" for="opPlay">어떤 놀이에 대한 이야기인가요? (선택)</label>
           <select id="opPlay"></select>

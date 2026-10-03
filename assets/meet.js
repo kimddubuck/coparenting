@@ -32,20 +32,22 @@ function watchComments(){
 }
 
 function meetCard(o, past){
-  const li = document.createElement('li'); if(past) li.className = 'op-past';
+  const li = document.createElement('li'); li.className = 'meet-card' + (past ? ' op-past' : '');
+  const body = document.createElement('div'); body.className = 'meet-body';
+  li.append(dateBadge(o.date), body);
   const today = todayStr(), cs = meet.comments[o.id] || [];
   const meta = document.createElement('div'); meta.className = 'op-meta';
   const w = document.createElement('span'); w.className = 'op-when';
-  w.textContent = `🙌 ${dayLabel(o.date)} ${o.slot || ''}${o.date===today ? ' · 오늘' : ''}`;
+  w.textContent = `${dayLabel(o.date)} ${o.slot || ''}${o.date===today ? ' · 오늘' : ''}`;
   const t = document.createElement('span'); t.textContent = fmtTime(o.createdAt);
   meta.append(w, t);
   const p = document.createElement('p'); p.className = 'op-text'; p.textContent = o.text;   // 글은 textContent로만
   const tally = document.createElement('p'); tally.className = 'tally';
   tally.innerHTML = `<span>🙋 참석 <b>${o.joins || 0}</b>명</span><span>🙅 불참 <b>${o.nos || 0}</b>명</span>`;
-  li.append(meta, p, tally);
+  body.append(meta, p, tally);
   if(past) return li;
 
-  const row = document.createElement('div'); row.className = 'op-meta';
+  const row = document.createElement('div'); row.className = 'vote-row';
   const mine = choices()[o.id];
   const jb = document.createElement('button'); jb.type = 'button'; jb.className = 'join'; jb.dataset.vote = 'joins'; jb.dataset.id = o.id;
   jb.setAttribute('aria-pressed', mine==='joins'); jb.disabled = !!mine;
@@ -56,7 +58,7 @@ function meetCard(o, past){
   const cb = document.createElement('button'); cb.type = 'button'; cb.className = 'join'; cb.dataset.toggle = o.id;
   cb.setAttribute('aria-expanded', meet.open.has(o.id));
   cb.textContent = `💬 댓글${cs.length ? ' ' + cs.length : ''}`;
-  row.append(jb, nb, cb); li.appendChild(row);
+  row.append(jb, nb, cb); body.appendChild(row);
 
   if(meet.open.has(o.id)){
     const box = document.createElement('div'); box.className = 'comments';
@@ -71,7 +73,7 @@ function meetCard(o, past){
     const f = document.createElement('form'); f.className = 'comment-form'; f.dataset.comment = o.id;
     f.innerHTML = `<input type="text" maxlength="300" placeholder="예: 11시쯤 갈 수 있어요" aria-label="댓글">
       <button class="btn" type="submit">달기</button>`;
-    box.append(ul, f); li.appendChild(box);
+    box.append(ul, f); body.appendChild(box);
   }
   return li;
 }
@@ -143,4 +145,6 @@ $('#meetList').addEventListener('submit', async e => {
 
 $('#meetDate').min = todayStr(); $('#meetDate').value = todayStr();
 $('#meetText').value = MEET_TEMPLATE; $('#meetCount').textContent = `${MEET_TEMPLATE.length} / 500`;
+$('#newToggle').addEventListener('click', () => { $('#meetForm').hidden = !$('#meetForm').hidden; if(!$('#meetForm').hidden) $('#meetText').focus(); });
+if(location.hash==='#new') $('#meetForm').hidden = false;
 meetInit();
