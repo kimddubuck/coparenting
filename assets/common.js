@@ -58,7 +58,7 @@ function watchMeets(cb){
   col.orderBy('createdAt','desc').limit(300).onSnapshot(snap => {
     const today = todayStr();
     cb(snap.docs.map(d => ({id:d.id, ...d.data()}))
-      .filter(o => o.topic==='meet' && o.date && o.date >= today)
+      .filter(o => o.topic==='meet' && o.date && o.date >= today && !o.cancelled)
       .sort((a,b) => a.date.localeCompare(b.date) || slotOrder(a.slot) - slotOrder(b.slot)));
   }, () => cb(null));
 }

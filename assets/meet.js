@@ -31,6 +31,10 @@ function watchComments(){
   });
 }
 
+// 내가 연 모임 (이 휴대폰에서 연 것만 취소할 수 있어요)
+function myMeets(){ try{ return JSON.parse(localStorage.getItem('copMyMeets')||'[]'); }catch(e){ return []; } }
+function addMyMeet(id){ try{ localStorage.setItem('copMyMeets', JSON.stringify([...myMeets(), id].slice(-100))); }catch(e){} }
+
 function meetCard(o, past){
   const li = document.createElement('li'); li.className = 'meet-card' + (past ? ' op-past' : '');
   const body = document.createElement('div'); body.className = 'meet-body';
@@ -46,6 +50,11 @@ function meetCard(o, past){
   const tally = document.createElement('p'); tally.className = 'tally';
   tally.innerHTML = `<span>참석 <b>${o.joins || 0}</b></span><span>미확정 <b>${o.maybes || 0}</b></span><span>불참 <b>${o.nos || 0}</b></span>`;
   body.append(meta, p, tally);
+  if(o.cancelled){
+    li.classList.add('op-past');
+    const c = document.createElement('p'); c.className = 'cancelled'; c.textContent = '❌ 주최자가 취소한 모임이에요';
+    body.appendChild(c); return li;
+  }
   if(past) return li;
 
   const row = document.createElement('div'); row.className = 'vote-row';
@@ -64,6 +73,11 @@ function meetCard(o, past){
   cb.textContent = `💬 댓글${cs.length ? ' ' + cs.length : ''}`;
   cb.className = 'join comment-toggle';
   row.append(jb, mb, nb); body.append(row, cb);
+  if(myMeets().includes(o.id)){
+    const x = document.createElement('button'); x.type = 'button'; x.className = 'cancel-meet'; x.dataset.cancelMeet = o.id;
+    x.textContent = meet.confirm===o.id ? '정말 취소할까요? 한 번 더 누르면 취소돼요' : '🗑 내가 연 모임 취소하기';
+    body.appendChild(x);
+  }
 
   if(meet.open.has(o.id)){
     const box = document.createElement('div'); box.className = 'comments';
@@ -123,15 +137,25 @@ $('#meetForm').addEventListener('submit', async e => {
   if(!meet.col) return;
   $('#meetSend').disabled = true;
   try{
-    await meet.col.add({topic:'meet', text, date, slot:meetPicker.state.slot, host, joins:0, maybes:0, nos:0, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+    const ref = await meet.col.add({topic:'meet', text, date, slot:meetPicker.state.slot, host, joins:0, maybes:0, nos:0, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
     $('#meetText').value = MEET_TEMPLATE; $('#meetCount').textContent = `${MEET_TEMPLATE.length} / 500`;
     try{ localStorage.setItem('copHost', host); }catch(e){}
+    if(ref && ref.id) addMyMeet(ref.id);
     $('#meetMsg').textContent = '모임을 열었어요! 용기 내 줘서 고마워요 💪';
   }catch(err){ $('#meetMsg').textContent = '저장하지 못했어요. 잠시 뒤 다시 눌러 주세요.'; }
   finally{ $('#meetSend').disabled = false; }
 });
 
 $('#meetList').addEventListener('click', async e => {
+  const cm = e.target.closest('[data-cancel-meet]');
+  if(cm){
+    const id = cm.dataset.cancelMeet;
+    if(meet.confirm !== id){ meet.confirm = id; renderMeets(); return; }   // 실수 방지: 두 번 눌러야 취소
+    cm.disabled = true; meet.confirm = null;
+    try{ await meet.col.doc(id).update({cancelled: true}); }
+    catch(err){ $('#meetEmpty').textContent = '취소하지 못했어요. 잠시 뒤 다시 눌러 주세요.'; renderMeets(); }
+    return;
+  }
   const tg = e.target.closest('[data-toggle]');
   if(tg){ const id = tg.dataset.toggle; meet.open.has(id) ? meet.open.delete(id) : meet.open.add(id); renderMeets(); return; }
   const b = e.target.closest('[data-vote]'); if(!b || !meet.col || choices()[b.dataset.id]) return;
