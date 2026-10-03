@@ -190,15 +190,21 @@ function sosInit(){
   });
 }
 
-// 홈: 요약만 (오늘 SOS 수, 가장 많은 시간) + SOS 보내러 가기
+// 홈: 오늘의 SOS 예약 시간표(9~18시) + 다가오는 날의 예약 목록 + SOS 예약하러 가기
 function sosSummary(){
   const box = document.querySelector('[data-sos-summary]'); if(!box) return;
   const draw = data => {
-    const today = todayStr(), up = data ? Object.entries(data).filter(([d]) => d >= today) : [];
-    let best = null;
-    up.forEach(([d,v]) => HOURS.forEach(h => { const n = v['h'+h] || 0; if(n && (!best || n > best.n)) best = {d, h, n}; }));
-    box.innerHTML = `<div class="sos-top"><p class="sos-h">💇‍♀️ 공동육아 예약 도우미</p><p class="sos-count">오늘 SOS <b>${data ? sosDayTotal(data[today]) : 0}</b>명</p></div>
-      <p class="sos-sub">${best ? `SOS 예약이 가장 몰린 때: <b>${dayLabel(best.d)} ${best.h}시 · ${best.n}명</b>` : '혼자 독박하는 날,<br>미용실 예약하듯 SOS를 예약해 두세요.<br>누가 예약했는지 아무도 몰라요.'}</p>
+    const today = todayStr(), t = (data && data[today]) || {};
+    const cells = HOURS.map(h => { const n = t['h'+h] || 0;
+      return `<div class="sos-cell${n ? ' on' : ''}"><b>${h}시</b><span>${n ? n + '명' : '·'}</span></div>`; }).join('');
+    const upcoming = data ? Object.keys(data).filter(d => d > today).sort().map(d => {
+      const hs = HOURS.filter(h => data[d]['h'+h]).map(h => `<span class="sos-chip">${h}시 ${data[d]['h'+h]}명</span>`);
+      return hs.length ? `<div class="sos-day"><b>${dayLabel(d)}</b><div>${hs.join('')}</div></div>` : '';
+    }).filter(Boolean).slice(0,5) : [];
+    box.innerHTML = `<div class="sos-top"><p class="sos-h">💇‍♀️ 공동육아 예약 도우미</p><p class="sos-count">오늘 SOS <b>${data ? sosDayTotal(t) : 0}</b>명</p></div>
+      <p class="sos-sub"><b>📅 오늘의 SOS 예약</b> (${dayLabel(today)})</p>
+      <div class="sos-today">${cells}</div>
+      ${upcoming.length ? `<p class="sos-sub"><b>🗓 다가오는 SOS 예약</b></p><div class="sos-days">${upcoming.join('')}</div>` : ''}
       <a class="sos-btn" href="meet.html#sos">🆘 독박 예정? SOS 예약하기<small>날짜와 시간만 누르면 끝</small></a>`;
   };
   draw(null);
