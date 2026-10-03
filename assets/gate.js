@@ -17,7 +17,7 @@ const GATE_KEY = 'copEntry';
     html.gate-locked body > *:not(#gate){display:none!important}
     #gate{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--page,#f3f5f2);z-index:100}
     #gate form{width:100%;max-width:340px;display:flex;flex-direction:column;gap:12px;background:var(--bg,#fff);border:1px solid var(--line,#e2e6e1);border-radius:20px;padding:28px 22px;box-shadow:0 2px 14px rgba(20,40,30,.08);text-align:center}
-    #gate .g-emoji{font-size:44px;line-height:1}
+    #gate .g-icon{width:72px;height:72px;margin:0 auto;border-radius:18px;display:block}
     #gate h1{margin:0;font-size:22px}
     #gate p{margin:0;color:var(--muted,#6b7570);font-size:14px}
     #gate input{font:inherit;font-size:16px;padding:12px;border-radius:12px;border:1px solid var(--line,#e2e6e1);background:var(--bg,#fff);color:var(--fg,#1f2a24);text-align:center}
@@ -32,7 +32,7 @@ const GATE_KEY = 'copEntry';
   function show(){
     const box = document.createElement('div'); box.id = 'gate';
     box.innerHTML = `<form autocomplete="off">
-        <span class="g-emoji" aria-hidden="true">🐍</span>
+        <img class="g-icon" src="assets/icon.svg" alt="" width="72" height="72">
         <h1>공동육아 SOS 🆘</h1>
         <p>단톡방에 공유된 입장 비밀번호를 입력해 주세요.<br>한 번 들어오면 다음부터는 바로 열려요.</p>
         <input type="password" id="gateInput" aria-label="입장 비밀번호" placeholder="비밀번호">

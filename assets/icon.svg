@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <!-- 앱 아이콘: 엄마 뱀 + 아빠 뱀 + 아기 뱀, 큰 SOS 깃발 (PNG는 이 그림으로 만들어요) -->
+  <rect width="120" height="120" rx="26" fill="#2a9095"/>
+  <!-- 깃발 (가운데 위, 크게) -->
+  <line x1="40" y1="13" x2="40" y2="76" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/>
+  <circle cx="40" cy="12" r="3.6" fill="#ffd166"/>
+  <path d="M41.5 13 h56 q-8 15 0 31 h-56 z" fill="#e5322a" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/>
+  <text x="68" y="36.5" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="19" fill="#fff">SOS</text>
+  <!-- 펄럭 -->
+  <path d="M103 17 q4 3 0 6 M106 27 q4 3 0 6 M103 37 q4 3 0 6" fill="none" stroke="#ffd166" stroke-width="2.2" stroke-linecap="round"/>
+  <!-- 바닥 똬리 -->
+  <ellipse cx="60" cy="104" rx="50" ry="10" fill="#3f9a45"/>
+  <!-- 엄마 뱀 (왼쪽) -->
+  <path d="M30 100 q-6 -14 2 -26" fill="none" stroke="#5cb85c" stroke-width="12" stroke-linecap="round"/>
+  <ellipse cx="32" cy="64" rx="17" ry="15" fill="#5cb85c"/>
+  <path d="M32 48 l-10 -8 q-3 7 0 13 z M32 48 l10 -8 q3 7 0 13 z" fill="#ff5c8a"/><circle cx="32" cy="48" r="3.2" fill="#ff2e6e"/>
+  <path d="M23 61 q3.5 3 7 0 M35 61 q3.5 3 7 0" fill="none" stroke="#1b1b1b" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M23 61 l-2 -1.6 M42 61 l2 -1.6" stroke="#1b1b1b" stroke-width="1.5" stroke-linecap="round"/>
+  <ellipse cx="21" cy="67" rx="3" ry="1.8" fill="#f4a3a3"/>
+  <path d="M29 70 q3 -2 6 0" fill="none" stroke="#1b1b1b" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- 아빠 뱀 (오른쪽) -->
+  <path d="M90 100 q6 -14 -2 -26" fill="none" stroke="#4aa64a" stroke-width="12" stroke-linecap="round"/>
+  <ellipse cx="88" cy="62" rx="17" ry="15" fill="#4aa64a"/>
+  <!-- 모자 -->
+  <path d="M73 55 q15 -16 30 0 z" fill="#3d7be0"/><path d="M71 55 h22" stroke="#2a5fb8" stroke-width="3" stroke-linecap="round"/>
+  <!-- 안경 -->
+  <circle cx="82" cy="63" r="4.6" fill="none" stroke="#1b1b1b" stroke-width="1.8"/><circle cx="94" cy="63" r="4.6" fill="none" stroke="#1b1b1b" stroke-width="1.8"/>
+  <path d="M86.6 63 h2.8" stroke="#1b1b1b" stroke-width="1.8"/>
+  <path d="M80 64 q2 1.5 4 0 M92 64 q2 1.5 4 0" fill="none" stroke="#1b1b1b" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M85 71 q3 -2 6 0" fill="none" stroke="#1b1b1b" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M103 50 q4 6 0 9 q-4 -3 0 -9 z" fill="#bfe6ff"/>
+  <!-- 아기 뱀 (가운데) -->
+  <ellipse cx="60" cy="86" rx="11" ry="10" fill="#a6e88a"/>
+  <circle cx="56.5" cy="85" r="2.6" fill="#fff"/><circle cx="57" cy="85.6" r="1.4" fill="#222"/>
+  <circle cx="63.5" cy="85" r="2.6" fill="#fff"/><circle cx="64" cy="85.6" r="1.4" fill="#222"/>
+  <ellipse cx="60" cy="91" rx="2.6" ry="2" fill="#e5322a"/>
+</svg>
