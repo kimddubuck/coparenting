@@ -4,13 +4,22 @@ const DEV_CATS = ['전체', ...CATS.filter(c => c!=='전체' && c!==HABIT && c!=
 const byId = id => PLAYS.find(p => p.id===id);
 const state = {cat:'전체', fresh:true, habit:null, dev:null};
 const folds = {habit:false, dev:false};   // 처음엔 카드 목록을 접어 둬요
-try{ const s = JSON.parse(localStorage.getItem('playPicker2')||'null');
-  if(s){ if(byId(s.habit)) state.habit = s.habit; if(byId(s.dev)) state.dev = s.dev; } }catch(e){}
-const save = () => { try{ localStorage.setItem('playPicker2', JSON.stringify({habit:state.habit, dev:state.dev})); }catch(e){} };
+let savedPick = null;   // 엄마 아빠가 추가한 놀이는 늦게 불러와지니, 고른 기록을 잠시 들고 있어요
+try{ savedPick = JSON.parse(localStorage.getItem('playPicker2')||'null'); }catch(e){}
+function restorePick(){
+  if(!savedPick) return;
+  ['habit','dev'].forEach(k => { if(!state[k] && savedPick[k] && byId(savedPick[k])) state[k] = savedPick[k]; });
+}
+restorePick();
+const save = () => { savedPick = {habit:state.habit, dev:state.dev}; try{ localStorage.setItem('playPicker2', JSON.stringify({habit:state.habit, dev:state.dev})); }catch(e){} };
 
 const tidy = PLAYS.find(p => p.cat===TIDY);
-const habits = PLAYS.filter(p => p.cat===HABIT);
-const devs = PLAYS.filter(p => p.cat!==HABIT && p.cat!==TIDY);
+const habits = [], devs = [];
+function splitPlays(){
+  habits.length = 0; devs.length = 0;
+  PLAYS.forEach(p => { if(p.cat===HABIT) habits.push(p); else if(p.cat!==TIDY) devs.push(p); });
+}
+splitPlays();
 // 재료가 겹치는지: 이름이 같거나 한쪽이 다른 쪽을 포함하면 같은 재료로 봐요 (예: '양말' ↔ '어른 양말')
 const sameItem = (a,b) => a===b || a.includes(b) || b.includes(a);
 const shared = (p,q) => p && q ? p.items.filter(i => q.items.some(j => sameItem(i,j))) : [];
@@ -132,3 +141,48 @@ $('#bar').onclick = () => openTray($('#tray').classList.contains('closed'));
 openTray(false);
 render();
 
+/* ---------- 놀이 추가: 누구나 이름 없이 (Firestore coparenting_plays) ---------- */
+const addState = {kind:'habit'};
+const ADD_CATS = DEV_CATS.slice(1);
+
+// 올라온 놀이를 PLAYS에 섞어 넣고 다시 그려요
+function mergeUserPlays(list){
+  for(let i = PLAYS.length - 1; i >= 0; i--) if(PLAYS[i].src==='user') PLAYS.splice(i, 1);
+  list.forEach(u => PLAYS.splice(PLAYS.length - 1, 0, {   // 마무리(맨 끝) 앞에 넣어요
+    id:'u-'+u.id, name:u.name, cat:u.kind==='habit' ? HABIT : (ADD_CATS.includes(u.cat) ? u.cat : ADD_CATS[0]),
+    say:u.say || '', how:u.how, items:Array.isArray(u.items) && u.items.length ? u.items : ['없음'], src:'user'}));
+  splitPlays(); restorePick(); render();
+}
+
+function renderAddForm(){
+  document.querySelectorAll('#addKind [data-kind]').forEach(b => b.setAttribute('aria-pressed', b.dataset.kind===addState.kind));
+  $('#addSayRow').hidden = addState.kind!=='habit';
+  $('#addCatRow').hidden = addState.kind!=='dev';
+}
+
+(function addInit(){
+  $('#addCat').innerHTML = ADD_CATS.map(c => `<option>${esc(c)}</option>`).join('');
+  renderAddForm();
+  $('#addOpen').addEventListener('click', () => { $('#addPanel').hidden = !$('#addPanel').hidden; if(!$('#addPanel').hidden) $('#addName').focus(); });
+  $('#addKind').addEventListener('click', e => { const b = e.target.closest('[data-kind]'); if(!b) return; addState.kind = b.dataset.kind; renderAddForm(); });
+  const col = copCollection() && firebase.firestore().collection('coparenting_plays');
+  if(!col){ $('#addOpen').disabled = true; $('#addOpen').title = '인터넷 연결이 없어 놀이를 추가할 수 없어요'; return; }
+  col.orderBy('createdAt').limit(200).onSnapshot(snap => mergeUserPlays(snap.docs.map(d => ({id:d.id, ...d.data()}))), () => {});
+
+  $('#addForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const name = $('#addName').value.trim(), how = $('#addHow').value.trim();
+    const items = $('#addItems').value.split(/[,、·]/).map(x => x.trim()).filter(Boolean).slice(0, 10);
+    if(!name || !how){ $('#addMsg').textContent = '놀이 이름과 하는 방법을 적어 주세요.'; return; }
+    const doc = {name, kind:addState.kind, how, items, createdAt: firebase.firestore.FieldValue.serverTimestamp()};
+    if(addState.kind==='habit' && $('#addSay').value.trim()) doc.say = $('#addSay').value.trim();
+    if(addState.kind==='dev') doc.cat = $('#addCat').value;
+    $('#addSend').disabled = true;
+    try{
+      await col.add(doc);
+      $('#addForm').reset(); renderAddForm();
+      $('#addMsg').textContent = '놀이를 추가했어요! 카드 목록에서 볼 수 있어요. 🙌';
+    }catch(err){ $('#addMsg').textContent = '저장하지 못했어요. 잠시 뒤 다시 눌러 주세요.'; }
+    finally{ $('#addSend').disabled = false; }
+  });
+})();

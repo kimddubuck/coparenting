@@ -16,6 +16,7 @@
   --tag:#2c2c2b; --tag-fg:#c7c6c3; --hover:#232323; --pick:#e6e5e3; --pick-fg:#191919;
   --done:#1f2b22; --done-fg:#7fb48f; --warn:#2e2816; --warn-fg:#d8b768; color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{word-break:keep-all;overflow-wrap:break-word;text-wrap:pretty;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.55;padding-inline:16px;padding-block:28px 140px}
 .wrap{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:32px;align-items:start}
 header{grid-column:1/-1;display:flex;flex-direction:column;gap:6px}
@@ -176,3 +177,8 @@ a.btn{display:inline-block;text-decoration:none}
 .comment-form{display:flex;gap:8px}
 .comment-form input{flex:1;min-width:0;font:inherit;font-size:14px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:7px 10px}
 .ops .comment-list li{padding:0;border:0;flex-direction:row}
+.add-wrap{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:6px}
+#addPanel[hidden]{display:none}
+.add-form{display:flex;flex-direction:column;gap:12px}
+.add-form input,.add-form select,.add-form textarea{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:8px 10px;width:100%}
+.add-form textarea{min-height:70px;resize:vertical}
