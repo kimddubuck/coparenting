@@ -218,7 +218,7 @@ h1{letter-spacing:-.02em}
 @media (max-width:820px){
   body{padding-bottom:calc(var(--tabbar) + 90px + env(safe-area-inset-bottom,0px))}
   .site-nav{justify-content:center}
-  .nav-links{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+  .nav-links{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(5,1fr);gap:0;
     background:var(--bg);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));box-shadow:0 -2px 12px rgba(0,0,0,.05)}
   .nav-links a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;border-radius:10px;font-size:11.5px;color:var(--muted)}
   .nav-links a[aria-current="page"]{background:none;color:var(--accent-ink)}
@@ -347,3 +347,12 @@ a.sos-btn{text-decoration:none;text-align:center}
   :root:not([data-theme="light"]) .sos-cell.on span,:root:not([data-theme="light"]) .sos-chip{color:#ff9b88}}
 :root[data-theme="dark"] .sos-cell.on,:root[data-theme="dark"] .sos-chip{background:#3a1f1a;border-color:#6b322a}
 :root[data-theme="dark"] .sos-cell.on span,:root[data-theme="dark"] .sos-chip{color:#ff9b88}
+
+/* ---------- 안전·개인정보 ---------- */
+.safety h2{font-size:18px;margin:0 0 8px}
+.safety p{margin:0 0 8px;line-height:1.65}
+.safe-list{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;line-height:1.6}
+.safe-table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:8px}
+.safe-table th,.safe-table td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top;line-height:1.55}
+.safe-table th{color:var(--muted);font-weight:600}
+.safe-table td:first-child{white-space:nowrap}
