@@ -1,4 +1,4 @@
-/* 동래아 공동육아 공통 도구 — 모든 페이지에서 먼저 불러와요 */
+/* 공동육아 SOS 공통 도구 — 모든 페이지에서 먼저 불러와요 */
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const WEEK = ['일','월','화','수','목','금','토'];
@@ -29,7 +29,7 @@ const NAV = [['index.html','home','🏠','홈'],['meet.html','meet','🙌','모�
 (function renderNav(){
   const nav = document.getElementById('siteNav'); if(!nav) return;
   const cur = nav.dataset.page;
-  nav.innerHTML = `<a class="brand" href="index.html">동래아 공동육아 🐍</a><div class="nav-links">` +
+  nav.innerHTML = `<a class="brand" href="index.html">공동육아 SOS 🆘</a><div class="nav-links">` +
     NAV.map(([href,key,icon,label]) => `<a href="${href}"${key===cur ? ' aria-current="page"' : ''}><span class="ti" aria-hidden="true">${icon}</span><span>${label}</span></a>`).join('') + '</div>';
 })();
 

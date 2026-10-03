@@ -33,7 +33,7 @@ const GATE_KEY = 'copEntry';
     const box = document.createElement('div'); box.id = 'gate';
     box.innerHTML = `<form autocomplete="off">
         <span class="g-emoji" aria-hidden="true">🐍</span>
-        <h1>동래아 공동육아</h1>
+        <h1>공동육아 SOS 🆘</h1>
         <p>단톡방에 공유된 입장 비밀번호를 입력해 주세요.<br>한 번 들어오면 다음부터는 바로 열려요.</p>
         <input type="password" id="gateInput" aria-label="입장 비밀번호" placeholder="비밀번호">
         <button type="submit">들어가기</button>

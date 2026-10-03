@@ -11,7 +11,7 @@
 - `research/` — 확인한 연구 근거 메모 (공지에는 넣지 않음, 질문받을 때 참고용)
 - `templates/` — 공지 HTML 템플릿, render.py 변환기
 - `output/` — 완성된 공지 PNG/PDF
-- 홈페이지 "동래아 공동육아" (GitHub Pages, 반 구분 없음)
+- 홈페이지 "공동육아 SOS" (동래래미안아이파크, 옛 이름 동래아 공동육아) (GitHub Pages, 반 구분 없음)
   - `index.html` 홈(소개·약속·다가오는 모임) / `meet.html` 모임 요청(누구나 날짜·장소 올리기, 참석·불참, 댓글) / `play.html` 놀이 고르기 / `board.html` 익명게시판(① 행동 / ② 경험 / 💬 자유)
   - 데이터: 놀이는 `plays.js` (공지를 낸 놀이는 `used`에 날짜 적기). 사이트에서 누구나 추가한 놀이(🙋 엄마 아빠 제안)·모임 요청·게시판 글은 Firestore
   - 공통 코드: `assets/common.css`, `assets/common.js`(메뉴·Firebase), 페이지별 `assets/play.js`, `assets/board.js`, `assets/meet.js`. `schedule.html`은 meet.html로 넘기는 옛 주소

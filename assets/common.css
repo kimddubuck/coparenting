@@ -317,3 +317,5 @@ a.sos-btn{text-decoration:none;text-align:center}
 .sos-picker{background:var(--page);border-radius:14px;padding:10px}
 .sos-sub b{color:var(--fg)}
 .sos-sub{font-size:13.5px;color:var(--muted);line-height:1.55}
+.cover .lead{font-size:17px}
+.cover-sub{margin:0;font-size:14px;color:var(--muted)}
