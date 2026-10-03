@@ -66,32 +66,62 @@ function watchMeets(cb){
 // 홈 화면 설치(웹앱)용 서비스 워커 등록 — 캐시는 하지 않아요
 if('serviceWorker' in navigator){ window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); }); }
 
-/* 🆘 오늘 놀고 싶어요: 하루 단위 익명 카운트 (coparenting_sos/YYYY-MM-DD 의 count)
-   <div class="sos" data-sos></div> 자리에 그려요. 기기당 하루 한 번만 눌러요. */
+/* 🆘 나 지금 힘들어요: 누른 시각(8시~20시)을 날짜별로 익명으로 세요.
+   저장: coparenting_sos/YYYY-MM-DD 문서의 h8 ~ h20 (그 시간에 누른 사람 수). 예전 'count'도 오늘 합계에 더해요.
+   기기당 같은 시간에는 한 번만 눌러요. 최근 30일을 모아 "SOS가 많은 시간" 막대를 그려요. */
+const SOS_HOURS = [8,9,10,11,12,13,14,15,16,17,18,19,20];
+function sosHourNow(){ const h = new Date().getHours(); return Math.min(20, Math.max(8, h)); }
 function sosInit(){
   const boxes = document.querySelectorAll('[data-sos]'); if(!boxes.length) return;
   const day = todayStr();
-  let count = 0, pressed = false;
-  try{ pressed = localStorage.getItem('copSos') === day; }catch(e){}
+  let today = 0, byHour = {}, days = 0, pressedKey = '';
+  try{ pressedKey = localStorage.getItem('copSos') || ''; }catch(e){}
+  const pressed = () => pressedKey === day + '-' + sosHourNow();
   const col = copCollection() && firebase.firestore().collection('coparenting_sos');
+
+  function chart(){
+    const vals = SOS_HOURS.map(h => byHour[h] || 0), max = Math.max(...vals);
+    if(!max) return '<p class="sos-empty">아직 모인 SOS가 없어요. 첫 SOS를 눌러 보세요!</p>';
+    const peak = SOS_HOURS[vals.indexOf(max)], now = sosHourNow();
+    return `<div class="sos-chart" role="img" aria-label="최근 30일 시간별 SOS 수: ${SOS_HOURS.map((h,i) => h + '시 ' + vals[i] + '번').join(', ')}">` +
+      SOS_HOURS.map((h,i) => `<div class="sos-col${h===peak ? ' peak' : ''}${h===now ? ' now' : ''}" title="${h}시 · ${vals[i]}번">
+          <span class="sos-val">${h===peak ? vals[i] : ''}</span>
+          <span class="sos-bar" style="height:${vals[i] ? Math.max(6, Math.round(vals[i] / max * 64)) : 2}px"></span>
+          <span class="sos-hr">${h % 3 === 0 ? h + '시' : ''}</span></div>`).join('') +
+      `</div><p class="sos-peak">요즘은 <b>${peak}시</b>쯤 SOS가 가장 많아요</p>`;
+  }
   function draw(){
+    const done = pressed();
     boxes.forEach(box => {
-      box.innerHTML = `<div class="sos-top"><p class="sos-h">🆘 오늘 놀고 싶은 사람?</p>
-          <p class="sos-count">${count ? `오늘 <b>${count}</b>명이 눌렀어요` : '아직 아무도 안 눌렀어요'}</p></div>
-        <button type="button" class="btn sos-btn${pressed ? ' done' : ''}" ${pressed || !col ? 'disabled' : ''}>${pressed ? '🆘 눌렀어요' : '🆘 나도 놀고 싶어요'}</button>
-        <p class="sos-hint">누가 눌렀는지는 몰라요. 숫자가 모이면 누군가 <a href="meet.html#new">＋ 모임 만들기</a>로 추진해 보세요!</p>`;
+      box.innerHTML = `<div class="sos-top"><p class="sos-h">🐍 오늘 육아 SOS</p>
+          <p class="sos-count">${today ? `오늘 <b>${today}</b>번` : '오늘은 아직 조용해요'}</p></div>
+        <button type="button" class="sos-btn${done ? ' done' : ''}" ${done || !col ? 'disabled' : ''}>
+          ${done ? '🫂 토닥토닥, 보냈어요' : '🆘 나 지금 힘들어요…'}<small>${done ? '누군가 같은 마음일 거예요' : '누르기만 하면 돼요. 누군지 아무도 몰라요'}</small></button>
+        <div class="sos-stat"><p class="sos-sub">최근 30일, 언제 SOS가 많을까?</p>${chart()}</div>
+        <p class="sos-hint">같은 시간에 SOS가 많으면 <a href="meet.html#new">＋ 모임 만들기</a>로 직접 모여 봐요!</p>`;
     });
   }
   draw();
   if(!col) return;
-  const ref = col.doc(day);
-  ref.onSnapshot(d => { count = (d.exists && d.data().count) || 0; draw(); }, () => {});
+  // 오늘 숫자
+  col.doc(day).onSnapshot(d => {
+    const v = d.exists ? d.data() : {};
+    today = (v.count || 0) + SOS_HOURS.reduce((a,h) => a + (v['h'+h] || 0), 0); draw();
+  }, () => {});
+  // 최근 30일 시간별 합계
+  const start = new Date(); start.setDate(start.getDate() - 29);
+  const startStr = `${start.getFullYear()}-${String(start.getMonth()+1).padStart(2,'0')}-${String(start.getDate()).padStart(2,'0')}`;
+  col.where(firebase.firestore.FieldPath.documentId(), '>=', startStr).onSnapshot(snap => {
+    byHour = {}; snap.docs.forEach(d => { const v = d.data(); SOS_HOURS.forEach(h => { byHour[h] = (byHour[h] || 0) + (v['h'+h] || 0); }); });
+    draw();
+  }, () => {});
   document.addEventListener('click', async e => {
-    const b = e.target.closest('[data-sos] .sos-btn'); if(!b || pressed) return;
+    const b = e.target.closest('[data-sos] .sos-btn'); if(!b || pressed()) return;
     b.disabled = true;
+    const h = sosHourNow();
     try{
-      await ref.set({count: firebase.firestore.FieldValue.increment(1)}, {merge:true});
-      pressed = true; try{ localStorage.setItem('copSos', day); }catch(err){}
+      await col.doc(day).set({['h'+h]: firebase.firestore.FieldValue.increment(1)}, {merge:true});
+      pressedKey = day + '-' + h; try{ localStorage.setItem('copSos', pressedKey); }catch(err){}
       draw();
     }catch(err){ b.disabled = false; }
   });

@@ -292,16 +292,30 @@ main a:not(.btn):not(.menu-card):not(.tally):not(.anon-box){color:var(--accent-i
 .time-btn{border:1px solid var(--line);background:var(--bg);color:var(--fg);font:inherit;font-size:15px;font-weight:600;border-radius:12px;padding:12px 0;cursor:pointer;font-variant-numeric:tabular-nums}
 .time-btn[aria-pressed="true"]{background:var(--pick);color:var(--pick-fg);border-color:var(--pick)}
 .picked-when{margin:0;font-weight:700;color:var(--accent-ink);text-align:center;min-height:1.4em}
-/* 🆘 오늘 놀고 싶어요 */
-.sos{display:flex;flex-direction:column;gap:10px;background:var(--bg);border:1.5px solid #f0a8a0;border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow)}
-.sos-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:4px 10px}
+/* 🆘 나 지금 힘들어요 + 시간대 막대 */
+.sos{display:flex;flex-direction:column;gap:12px;background:var(--bg);border:1.5px solid #f2b8ae;border-radius:20px;padding:16px;box-shadow:var(--shadow)}
 .sos p{margin:0}
+.sos-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:4px 10px}
 .sos-h{font-weight:800;font-size:16px}
 .sos-count{font-size:14px;color:var(--muted)}
-.sos-count b{color:#e0533f;font-size:20px}
-.sos-btn{width:100%;background:#e0533f;color:#fff;border-color:#e0533f;font-size:15px;padding:12px}
-.sos-btn.done{background:var(--tag);color:var(--muted);border-color:var(--line)}
+.sos-count b{color:var(--fg);font-size:18px}
+.sos-btn{display:flex;flex-direction:column;align-items:center;gap:3px;width:100%;border:0;border-radius:999px;padding:14px 16px;background:linear-gradient(135deg,#ff8a7a,#e9573f);color:#fff;font:inherit;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(233,87,63,.3)}
+.sos-btn small{font-size:12px;font-weight:500;opacity:.92}
+.sos-btn:active:not(:disabled){transform:scale(.98)}
+.sos-btn.done{background:var(--accent-soft);color:var(--accent-ink);box-shadow:none}
 .sos-btn:disabled{cursor:default}
+.sos-btn:focus-visible{outline:2px solid var(--fg);outline-offset:3px}
+.sos-stat{display:flex;flex-direction:column;gap:6px;background:var(--page);border-radius:14px;padding:12px}
+.sos-sub{font-size:13px;color:var(--muted);font-weight:600}
+.sos-chart{display:grid;grid-template-columns:repeat(13,1fr);gap:2px;align-items:end;height:96px}
+.sos-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;height:100%}
+.sos-bar{width:70%;max-width:16px;border-radius:4px 4px 0 0;background:var(--accent-ink);opacity:.35}
+.sos-col.peak .sos-bar{opacity:1}
+.sos-col.now .sos-hr{color:var(--fg);font-weight:700}
+.sos-val{font-size:12px;font-weight:700;color:var(--fg);min-height:14px}
+.sos-hr{font-size:11px;color:var(--muted);min-height:14px;white-space:nowrap}
+.sos-peak{font-size:13px;color:var(--fg)}
+.sos-empty{font-size:13px;color:var(--muted)}
 .sos-hint{font-size:13px;color:var(--muted)}
-.sos-hint a{color:var(--accent-ink);font-weight:700}
-.sos-hint a{white-space:nowrap}
+.sos-hint a{color:var(--accent-ink);font-weight:700;white-space:nowrap}
+@media (prefers-reduced-motion:no-preference){.sos-btn{transition:transform .1s}}
