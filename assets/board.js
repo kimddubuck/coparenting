@@ -7,8 +7,10 @@ const board = {topic:'habit', slot:'오전', items:[], col:null};
 const OP_HINT = {
   habit:'예: 신발을 스스로 벗어서 정리했으면 좋겠어요. / 숟가락질을 세 번째 하니까 이제 국자를 꽉 잡아요.',
   dev:'예: 모래나 흙을 만져 보게 하고 싶어요. / 얼음 만질 때 처음엔 놀랐는데 나중엔 웃었어요.',
-  meet:'예: 비 오니까 커뮤니티 실내에서 뽁뽁이 놀이 해요. 편하게 오세요!',
+  meet:'장소, 시간, 하고 싶은 놀이를 적어 주세요.',
   free:'예: 요즘 밤에 자주 깨는데 다들 어떻게 하세요? / 오늘 다들 고생 많았어요.'};
+// 번개 글 양식: 번개 탭을 열면 내용 칸에 미리 채워져요
+const MEET_TEMPLATE = '장소: \n시간: \n놀이: ';
 const EMPTY = {habit:'아직 글이 없어요. 첫 글을 남겨 주세요.', dev:'아직 글이 없어요. 첫 글을 남겨 주세요.',
   meet:'다가오는 번개가 없어요. 같이 놀고 싶은 날을 남겨 주세요.', free:'아직 글이 없어요. 첫 글을 남겨 주세요.'};
 
@@ -36,10 +38,15 @@ function renderOpTabs(){
   if(TOPIC_PLAYS[t]) $('#opPlay').innerHTML = '<option value="">놀이 전체 / 기타</option>' +
     TOPIC_PLAYS[t]().map(p => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('');
   $('#meetFields').hidden = t!=='meet';
+  $('#meetExample').hidden = t!=='meet';
+  const ta = $('#opText');
+  if(t==='meet' && !ta.value.trim()) ta.value = MEET_TEMPLATE;
+  if(t!=='meet' && ta.value===MEET_TEMPLATE) ta.value = '';
+  $('#opCount').textContent = `${ta.value.length} / 500`;
   if(t==='meet' && !$('#opDate').value){ $('#opDate').value = todayStr(); }
   $('#opDate').min = todayStr();
   document.querySelectorAll('#opSlot [data-slot]').forEach(b => b.setAttribute('aria-pressed', b.dataset.slot===board.slot));
-  $('#opTextLabel').textContent = t==='meet' ? '장소·하고 싶은 놀이' : '내용';
+  $('#opTextLabel').textContent = t==='meet' ? '장소·시간·놀이' : '내용';
   $('#opText').placeholder = OP_HINT[t];
 }
 
@@ -101,7 +108,9 @@ $('#opText').addEventListener('input', () => { $('#opCount').textContent = `${$(
 $('#opForm').addEventListener('submit', async e => {
   e.preventDefault();
   const t = board.topic, text = $('#opText').value.trim();
-  if(!text){ $('#opMsg').textContent = t==='meet' ? '장소나 하고 싶은 놀이를 적어 주세요.' : '내용을 적어 주세요.'; return; }
+  // 번개는 양식 칸(장소:/시간:/놀이:)만 남아 있으면 빈 글로 봐요
+  const filled = t==='meet' ? text.replace(/^(장소|시간|놀이):/gm, '').trim() : text;
+  if(!filled){ $('#opMsg').textContent = t==='meet' ? '장소, 시간, 놀이 중 하나는 적어 주세요.' : '내용을 적어 주세요.'; return; }
   if(!board.col) return;
   const doc = {topic:t, text, createdAt: firebase.firestore.FieldValue.serverTimestamp()};
   if(TOPIC_PLAYS[t] && $('#opPlay').value) doc.play = $('#opPlay').value;
@@ -113,7 +122,7 @@ $('#opForm').addEventListener('submit', async e => {
   $('#opSend').disabled = true;
   try{
     await board.col.add(doc);
-    $('#opText').value = ''; $('#opCount').textContent = '0 / 500';
+    $('#opText').value = t==='meet' ? MEET_TEMPLATE : ''; $('#opCount').textContent = `${$('#opText').value.length} / 500`;
     $('#opMsg').textContent = t==='meet' ? '번개를 올렸어요! ⚡' : '남겼어요. 고마워요!';
   }catch(err){
     $('#opMsg').textContent = '저장하지 못했어요. 잠시 뒤 다시 눌러 주세요.';

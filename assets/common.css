@@ -162,3 +162,7 @@ aside h2{margin:0;font-size:16px;font-weight:600}
 a.btn{display:inline-block;text-decoration:none}
 .wrap.single main{display:flex;flex-direction:column;gap:36px}
 .hero + .sec, .page-h + .sec{margin-top:-8px}
+.example{display:flex;flex-direction:column;gap:6px}
+.example[hidden]{display:none}
+.example-card{display:flex;flex-direction:column;gap:6px;align-items:flex-start;border:1px dashed var(--line);border-radius:var(--r);padding:12px;background:var(--tag)}
+.example-card .op-text{margin:0;white-space:pre-wrap;font-size:14.5px}
