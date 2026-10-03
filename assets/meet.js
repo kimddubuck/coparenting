@@ -175,3 +175,4 @@ $('#meetText').value = MEET_TEMPLATE; $('#meetCount').textContent = `${MEET_TEMP
 $('#newToggle').addEventListener('click', () => { $('#meetForm').hidden = !$('#meetForm').hidden; if(!$('#meetForm').hidden) $('#meetText').focus(); });
 if(location.hash==='#new') $('#meetForm').hidden = false;
 meetInit();
+sosInit();

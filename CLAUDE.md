@@ -17,6 +17,7 @@
   - 공통 코드: `assets/common.css`, `assets/common.js`(메뉴·Firebase), 페이지별 `assets/play.js`, `assets/board.js`, `assets/meet.js`. `schedule.html`은 meet.html로 넘기는 옛 주소
   - 게시판 Firestore 규칙은 `의견게시판_설정.md`
   - 웹앱 설치: `manifest.webmanifest`, `sw.js`(캐시 안 함, 설치 조건용), 아이콘 `assets/icon-*.png`. 홈 아래 📲 설치 안내(안드로이드 크롬 / 아이폰 크롬·사파리)
+  - 🆘 오늘 놀고 싶어요: 홈·모임 페이지 맨 위, 날짜별 익명 숫자(Firestore coparenting_sos). 숫자가 모이면 누군가 모임을 만드는 흐름
   - 입장 비밀번호: `assets/gate.js` (모든 페이지 head에서 먼저 불러옴). 비밀번호 원문은 저장소에 적지 않고 SHA-256 지문(GATE_HASH)만 둠. 바꿀 때는 새 비밀번호를 NFC로 정규화해 SHA-256을 계산해 GATE_HASH만 교체. 한 번 통과하면 그 브라우저 localStorage(copEntry)에 기억됨. 링크를 우연히 연 사람을 막는 수준이고 진짜 보안은 아님
 - `ideas/어린이집_응용_목록.md` — 어린이집 활동을 집 생활용품으로 바꾼 목록. 새 회차는 여기서 고르고, 쓴 회차를 표시
 - `ideas/외부자료_응용_목록.md`, `ideas/생활연습_놀이.md` — 공공·해외 자료(원문 미확인), 생활 연습 놀이 목록

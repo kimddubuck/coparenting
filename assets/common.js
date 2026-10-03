@@ -65,3 +65,34 @@ function watchMeets(cb){
 
 // 홈 화면 설치(웹앱)용 서비스 워커 등록 — 캐시는 하지 않아요
 if('serviceWorker' in navigator){ window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); }); }
+
+/* 🆘 오늘 놀고 싶어요: 하루 단위 익명 카운트 (coparenting_sos/YYYY-MM-DD 의 count)
+   <div class="sos" data-sos></div> 자리에 그려요. 기기당 하루 한 번만 눌러요. */
+function sosInit(){
+  const boxes = document.querySelectorAll('[data-sos]'); if(!boxes.length) return;
+  const day = todayStr();
+  let count = 0, pressed = false;
+  try{ pressed = localStorage.getItem('copSos') === day; }catch(e){}
+  const col = copCollection() && firebase.firestore().collection('coparenting_sos');
+  function draw(){
+    boxes.forEach(box => {
+      box.innerHTML = `<div class="sos-top"><p class="sos-h">🆘 오늘 놀고 싶은 사람?</p>
+          <p class="sos-count">${count ? `오늘 <b>${count}</b>명이 눌렀어요` : '아직 아무도 안 눌렀어요'}</p></div>
+        <button type="button" class="btn sos-btn${pressed ? ' done' : ''}" ${pressed || !col ? 'disabled' : ''}>${pressed ? '🆘 눌렀어요' : '🆘 나도 놀고 싶어요'}</button>
+        <p class="sos-hint">누가 눌렀는지는 몰라요. 숫자가 모이면 누군가 <a href="meet.html#new">＋ 모임 만들기</a>로 추진해 보세요!</p>`;
+    });
+  }
+  draw();
+  if(!col) return;
+  const ref = col.doc(day);
+  ref.onSnapshot(d => { count = (d.exists && d.data().count) || 0; draw(); }, () => {});
+  document.addEventListener('click', async e => {
+    const b = e.target.closest('[data-sos] .sos-btn'); if(!b || pressed) return;
+    b.disabled = true;
+    try{
+      await ref.set({count: firebase.firestore.FieldValue.increment(1)}, {merge:true});
+      pressed = true; try{ localStorage.setItem('copSos', day); }catch(err){}
+      draw();
+    }catch(err){ b.disabled = false; }
+  });
+}
