@@ -25,7 +25,7 @@ function dateBadge(ymd){
 function dayLabel(ymd){ const [y,m,d] = ymd.split('-').map(Number); return `${m}/${d} (${WEEK[new Date(y, m-1, d).getDay()]})`; }
 
 /* 위쪽 메뉴: 페이지마다 <nav id="siteNav" data-page="..."> 만 두면 여기서 채워요 */
-const NAV = [['index.html','home','🏠','홈'],['meet.html','meet','🙌','모임'],['play.html','play','🧸','놀이'],['board.html','board','💬','게시판'],['safety.html','safety','🔒','안전']];
+const NAV = [['index.html','home','🏠','홈'],['meet.html','meet','🙌','모임'],['play.html','play','🧸','놀이'],['safety.html','safety','🔒','개인정보']];
 (function renderNav(){
   const nav = document.getElementById('siteNav'); if(!nav) return;
   const cur = nav.dataset.page;
@@ -33,7 +33,7 @@ const NAV = [['index.html','home','🏠','홈'],['meet.html','meet','🙌','모�
     NAV.map(([href,key,icon,label]) => `<a href="${href}"${key===cur ? ' aria-current="page"' : ''}><span class="ti" aria-hidden="true">${icon}</span><span>${label}</span></a>`).join('') + '</div>';
 })();
 
-/* Firebase (성장노트와 같은 프로젝트) — 익명게시판·모임 요청 글이 저장되는 곳
+/* Firebase (성장노트와 같은 프로젝트) — 모임·SOS·놀이 추가가 저장되는 곳
    필요한 Firestore 보안 규칙은 의견게시판_설정.md 참고 */
 const firebaseConfig = {
   apiKey: "AIzaSyC-dKd4u8cHn5lvC9EU5ZiXLY07HQ1oCiI",
@@ -43,7 +43,7 @@ const firebaseConfig = {
   messagingSenderId: "1005649043387",
   appId: "1:1005649043387:web:5386ca629d4dc605992e9e"
 };
-// 게시판 컬렉션을 돌려줘요. 인터넷·SDK 문제로 못 쓰면 null
+// 모임 컬렉션을 돌려줘요. 인터넷·SDK 문제로 못 쓰면 null
 function copCollection(){
   try{
     if(!(window.firebase && firebase.initializeApp)) return null;

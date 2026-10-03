@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>안전·개인정보 · 공동육아 SOS</title>
+<title>개인정보 · 공동육아 SOS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
@@ -20,7 +20,7 @@
   <nav class="site-nav" id="siteNav" data-page="safety" aria-label="메뉴"></nav>
   <main class="safety">
     <section class="slot">
-      <div class="slot-h"><h1>🔒 안전·개인정보</h1></div>
+      <div class="slot-h"><h1>🔒 개인정보</h1></div>
       <p class="hint">걱정되시는 분들을 위해, 이 사이트가 무엇을 저장하고 무엇을 저장하지 않는지 있는 그대로 적었어요. 쓰기 싫으시면 안 쓰셔도 괜찮아요 🙂</p>
     </section>
 
@@ -40,7 +40,6 @@
         <tr><th>어디서</th><th>저장되는 것</th></tr>
         <tr><td>🆘 SOS 예약</td><td>날짜·시간별 <b>숫자만</b> (예: 10월 3일 16시 = 2명). 누가 눌렀는지는 서버에 없어요.</td></tr>
         <tr><td>🙌 모임</td><td>날짜·시간, 장소/놀이 글, <b>주최자 별명</b>(직접 적은 것), 참석·미확정·불참 숫자, 댓글 글</td></tr>
-        <tr><td>💬 게시판</td><td>글 내용과 주제(이름 없음)</td></tr>
         <tr><td>🧸 놀이 추가</td><td>놀이 이름·방법·준비물</td></tr>
       </table>
       <p class="hint">통신은 모두 암호화(HTTPS)돼요. 서버는 Google Firebase를 써요.</p>
@@ -63,27 +62,7 @@
       <ul class="safe-list">
         <li><b>SOS 예약</b>: '📌 내 SOS 예약'에서 언제든 취소 → 숫자가 바로 1 줄어요.</li>
         <li><b>모임</b>: 연 휴대폰에서 '내가 연 모임 취소하기' → '취소된 모임'으로 표시돼요.</li>
-        <li><b>게시판 글·댓글</b>: 이름 없이 올라가서 '누가 쓴 글인지' 사이트도 몰라요. 그래서 본인이 직접 지우는 버튼은 없어요 (남이 내 글을 지우는 것도 막기 위해서예요). 지우고 싶은 글이 있으면 운영자에게 말해 주세요. 운영자는 로그인해야만 지울 수 있어요.</li>
-      </ul>
-    </section>
-
-    <section class="slot">
-      <h2>🛡 해킹·장난 막는 장치</h2>
-      <ul class="safe-list">
-        <li>서버에 <b>보안 규칙</b>이 걸려 있어서, 정해진 칸·길이만 저장돼요 (글 500자, 댓글 300자, 별명 20자).</li>
-        <li>남의 글을 <b>고치거나 지울 수 없어요</b>. 숫자는 한 번에 1씩만 바뀌고, SOS 숫자는 0 아래로 내려가지 않아요.</li>
-        <li>같은 Firebase에 있는 다른 개인 자료는 <b>로그인한 사람만</b> 열 수 있게 따로 잠겨 있어요.</li>
-        <li>사이트 코드는 모두 공개돼 있어서 누구나 위 내용을 확인할 수 있어요.</li>
-      </ul>
-    </section>
-
-    <section class="slot">
-      <h2>⚠️ 솔직하게 알려 드리는 한계</h2>
-      <ul class="safe-list">
-        <li>입장 비밀번호는 <b>모르는 사람이 우연히 들어오는 것을 막는 문</b> 정도예요. 마음먹고 사이트 구조를 아는 사람은 올라간 글을 읽을 수 있어요.</li>
-        <li>그러니 <b>아이 실명, 전화번호, 동·호수, 어린이집 이름</b>은 적지 말아 주세요. 주최자 이름도 '하늘맘' 같은 별명을 추천해요.</li>
-        <li>글 내용(말투, 특정 사건)으로 누군지 짐작될 수는 있어요.</li>
-        <li>서버(Firebase)와 글꼴(Google Fonts)을 제공하는 Google은 서비스 운영을 위해 접속 기록을 따로 가질 수 있어요(Google 정책). 이 사이트는 그 기록을 보거나 쓰지 않아요.</li>
+        <li><b>모임 댓글</b>: 이름 없이 올라가서 본인이 지우는 버튼은 없어요. 지우고 싶으면 운영자에게 말해 주세요.</li>
       </ul>
     </section>
   </main>

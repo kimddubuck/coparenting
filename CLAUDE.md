@@ -12,10 +12,10 @@
 - `templates/` — 공지 HTML 템플릿, render.py 변환기
 - `output/` — 완성된 공지 PNG/PDF
 - 홈페이지 "공동육아 SOS" (동래래미안아이파크, 옛 이름 동래아 공동육아) (GitHub Pages, 반 구분 없음)
-  - `index.html` 홈(소개·약속·다가오는 모임) / `meet.html` 모임 요청(누구나 날짜·장소 올리기, 참석·불참, 댓글) / `play.html` 놀이 고르기 / `board.html` 익명게시판(① 행동 / ② 경험 / 💬 자유) / `safety.html` 안전·개인정보 안내(서버 저장 vs 휴대폰에만 남는 것, 보안 규칙, 한계) — 저장 항목이나 규칙을 바꾸면 이 페이지도 같이 고치기
-  - 데이터: 놀이는 `plays.js` (공지를 낸 놀이는 `used`에 날짜 적기). 사이트에서 누구나 추가한 놀이(🙋 엄마 아빠 제안)·모임 요청·게시판 글은 Firestore
-  - 공통 코드: `assets/common.css`, `assets/common.js`(메뉴·Firebase), 페이지별 `assets/play.js`, `assets/board.js`, `assets/meet.js`. `schedule.html`은 meet.html로 넘기는 옛 주소
-  - 게시판 Firestore 규칙은 `의견게시판_설정.md`
+  - `index.html` 홈(소개·약속·다가오는 모임) / `meet.html` 모임 요청(누구나 날짜·장소 올리기, 참석·불참, 댓글) / `play.html` 놀이 고르기 / `safety.html` 개인정보 안내(서버 저장 vs 휴대폰에만 남는 것, 취소하고 지우기) — 저장 항목이나 규칙을 바꾸면 이 페이지도 같이 고치기
+  - 데이터: 놀이는 `plays.js` (공지를 낸 놀이는 `used`에 날짜 적기). 사이트에서 누구나 추가한 놀이(🙋 엄마 아빠 제안)·모임·SOS는 Firestore
+  - 공통 코드: `assets/common.css`, `assets/common.js`(메뉴·Firebase), 페이지별 `assets/play.js`, `assets/meet.js`. `schedule.html`(→meet.html)·`board.html`(→홈, 게시판은 없앰)은 옛 주소
+  - Firestore 규칙은 `의견게시판_설정.md`
   - 웹앱 설치: `manifest.webmanifest`, `sw.js`(캐시 안 함, 설치 조건용), 아이콘 `assets/icon-*.png`. 홈 아래 📲 설치 안내(안드로이드 크롬 / 아이폰 크롬·사파리)
   - SOS는 익명 눈치게임, 모임은 주최자 별명(host)을 걸고 여는 것. 모임 만들 때 주최자 이름 필수(지난번 이름 기억)
   - 🆘 육아 SOS (모임 페이지): 달력에서 날짜 + 9~18시 시간을 눌러 익명으로 '나 힘들어요' 보내기. 달력엔 날짜별, 시간 버튼엔 시간별 SOS 수. Firestore coparenting_sos/날짜 의 hN. 홈엔 요약만. '＋ 모임 만들기'를 누르면 고른 날짜·시간이 모임 양식에 채워짐
@@ -26,7 +26,7 @@
 
 ## 개인정보
 - 이 저장소는 공개(public). 어린이집 이름·반 이름, 계획안 원본 사진, 아이 이름은 올리지 않기
-- 익명게시판 글은 Firestore에 저장되고 누구나 읽을 수 있음. 이름·로그인 정보는 저장하지 않음
+- 모임·SOS·댓글은 Firestore에 저장되고 누구나 읽을 수 있음. 이름·로그인 정보는 저장하지 않음
 
 ## 공지 작성 규칙 (사용자가 직접 정한 것)
 - 디자인: 노션 스타일, Pretendard 글꼴, 흰 바탕 + 차콜 글씨, 연회색 태그. 알록달록한 색 지양
