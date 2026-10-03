@@ -2,7 +2,7 @@
 
 ## 개요
 - 아파트 커뮤니티 실내에서 하는 오전반 공동육아 놀이 기록·공지 자료 저장소
-- 공개 사이트: https://kimddubuck.github.io/coparenting/ (Yunha_education 저장소의 coparenting/ 폴더에서 옮겨 옴, 2026-10-02)
+- 공개 홈페이지: https://kimddubuck.github.io/coparenting/ (동래아 공동육아) (Yunha_education 저장소의 coparenting/ 폴더에서 옮겨 옴, 2026-10-02)
 - 대상: 2025년 6~10월생 아이들 (2026년 10월 기준 12~16개월)
 - 매 회차 단톡방에 올릴 A4 1장 공지 이미지(PNG)와 PDF를 만든다
 
@@ -11,7 +11,11 @@
 - `research/` — 확인한 연구 근거 메모 (공지에는 넣지 않음, 질문받을 때 참고용)
 - `templates/` — 공지 HTML 템플릿, render.py 변환기
 - `output/` — 완성된 공지 PNG/PDF
-- `index.html` + `plays.js` — 공개 놀이 고르기 사이트(GitHub Pages)와 익명게시판(① 행동 / ② 경험 / ⚡ 번개 요청 / 💬 자유). 놀이 추가·`used` 회차 기록은 plays.js만 고치기. 설정은 `의견게시판_설정.md`
+- 홈페이지 "동래아 공동육아" (GitHub Pages, 반 구분 없음)
+  - `index.html` 홈(소개·약속·다가오는 일정) / `schedule.html` 일정·공지 / `play.html` 놀이 고르기 / `board.html` 익명게시판(① 행동 / ② 경험 / ⚡ 번개 / 💬 자유)
+  - 데이터: 놀이는 `plays.js`, 모임 일정·공지 이미지는 `schedule.js` — 새 회차 공지를 만들면 schedule.js에 한 줄 추가하고 plays.js의 `used`도 적기
+  - 공통 코드: `assets/common.css`, `assets/common.js`(메뉴·Firebase), 페이지별 `assets/play.js`, `assets/board.js`, `assets/schedule.js`
+  - 게시판 Firestore 규칙은 `의견게시판_설정.md`
 - `ideas/어린이집_응용_목록.md` — 어린이집 활동을 집 생활용품으로 바꾼 목록. 새 회차는 여기서 고르고, 쓴 회차를 표시
 - `ideas/외부자료_응용_목록.md`, `ideas/생활연습_놀이.md` — 공공·해외 자료(원문 미확인), 생활 연습 놀이 목록
 
