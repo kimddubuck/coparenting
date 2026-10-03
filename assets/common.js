@@ -67,12 +67,13 @@ function watchMeets(cb){
 if('serviceWorker' in navigator){ window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); }); }
 
 /* ---------- 공용 달력 + 시간(9~20시) 고르기 ----------
-   createPicker(root, {months, whenText, dayBadge, hourBadge, onChange})
+   createPicker(root, {months, multi, whenText, dayBadge, hourBadge, onChange})
+   - multi: true면 시간을 여러 개 고를 수 있어요 (state.slots, state.slot은 그중 가장 이른 시간)
    - root 안에 달력과 시간 버튼을 그려요. 지난 날은 막고, 이번 달부터 months달까지 넘겨 볼 수 있어요.
    - dayBadge(날짜) / hourBadge(날짜, '10시') 가 숫자를 돌려주면 작게 표시해요 (SOS 수 등). */
 function createPicker(root, opts = {}){
   const months = opts.months || 3;
-  const st = {date: todayStr(), slot: null, month: null};
+  const st = {date: todayStr(), slot: null, slots: [], month: null};
   const ymd = (y,m,d) => `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
   root.classList.add('picker');
   root.innerHTML = `<div class="cal-head">
@@ -100,7 +101,7 @@ function createPicker(root, opts = {}){
     root.querySelector('.cal-grid').innerHTML = html;
     root.querySelector('.time-grid').innerHTML = HOURS.map(h => {
       const n = opts.hourBadge ? opts.hourBadge(st.date, h + '시') : 0;
-      return `<button type="button" class="time-btn" data-slot="${h}시" aria-pressed="${st.slot===h+'시'}">${h}:00${n ? `<small>${n}명</small>` : ''}</button>`;
+      return `<button type="button" class="time-btn" data-slot="${h}시" aria-pressed="${opts.multi ? st.slots.includes(h+'시') : st.slot===h+'시'}">${h}:00${n ? `<small>${n}명</small>` : ''}</button>`;
     }).join('');
     root.querySelector('.picked-when').textContent = st.date ? (opts.whenText ? opts.whenText(st) : `${dayLabel(st.date)}${st.slot ? ' ' + st.slot : ''}`) : '';
   }
@@ -108,8 +109,13 @@ function createPicker(root, opts = {}){
     const nav = e.target.closest('[data-nav]');
     if(nav && !nav.disabled){ let {y,m} = st.month; m += +nav.dataset.nav; if(m < 1){ m = 12; y--; } if(m > 12){ m = 1; y++; } st.month = {y,m}; render(); return; }
     const d = e.target.closest('[data-date]');
-    if(d && !d.disabled){ st.date = d.dataset.date; render(); opts.onChange && opts.onChange(st); return; }
+    if(d && !d.disabled){ st.date = d.dataset.date; if(opts.multi){ st.slots = []; st.slot = null; } render(); opts.onChange && opts.onChange(st); return; }
     const t = e.target.closest('[data-slot]');
+    if(t && opts.multi){   // 누를 때마다 넣었다 뺐다
+      const v = t.dataset.slot;
+      st.slots = st.slots.includes(v) ? st.slots.filter(x => x !== v) : [...st.slots, v].sort((a,b) => parseInt(a) - parseInt(b));
+      st.slot = st.slots[0] || null; render(); opts.onChange && opts.onChange(st); return;
+    }
     if(t){ st.slot = t.dataset.slot; render(); opts.onChange && opts.onChange(st); }
   });
   render();
@@ -145,17 +151,18 @@ function sosInit(){
   const picker = createPicker(root.querySelector('.sos-picker'), {
     dayBadge: d => sosDayTotal(data[d]),
     hourBadge: (d, slot) => (data[d] || {})['h' + parseInt(slot)] || 0,
-    whenText: st => st.slot ? `${dayLabel(st.date)} ${st.slot} · 이미 ${(data[st.date] || {})['h' + parseInt(st.slot)] || 0}명이 SOS 예약` : `${dayLabel(st.date)} · 시간을 골라 주세요`,
+    multi: true,
+    whenText: st => st.slots.length ? `${dayLabel(st.date)} ${st.slots.join('·')} 골랐어요` : `${dayLabel(st.date)} · 시간을 골라 주세요 (여러 개 OK)`,
     onChange: draw
   });
   function draw(){
-    const st = picker.state, key = st.slot ? st.date + '-' + st.slot : '', done = key && sent.includes(key);
+    const st = picker.state, keys = st.slots.map(v => st.date + '-' + v), done = keys.length > 0 && keys.every(k => sent.includes(k));
     root.querySelector('.sos-count').innerHTML = `오늘 SOS <b>${sosDayTotal(data[todayStr()])}</b>명`;
     const b = root.querySelector('.sos-btn');
-    b.disabled = !st.slot || done || !col;
+    b.disabled = !keys.length || done || !col;
     b.className = 'sos-btn' + (done ? ' done' : '');
     b.innerHTML = done ? '✅ SOS 예약했어요<small>🫂 아래 "내 SOS 예약"에서 취소할 수 있어요</small>'
-      : st.slot ? `🆘 ${dayLabel(st.date)} ${st.slot} SOS 예약하기<small>누르기만 하면 돼요</small>` : '🆘 SOS 예약하기<small>독박하는 날짜와 시간을 먼저 눌러 주세요</small>';
+      : keys.length ? `🆘 ${dayLabel(st.date)} ${st.slots.join('·')} SOS 예약하기<small>누르기만 하면 돼요</small>` : '🆘 SOS 예약하기<small>독박하는 날짜와 시간을 먼저 눌러 주세요 (여러 시간 OK)</small>';
     // 내 SOS 예약 (이 휴대폰에서 한 것, 오늘 이후만) — 실수로 눌렀으면 여기서 취소
     const mine = sent.filter(k => k.slice(0,10) >= todayStr()).sort();
     const box = root.querySelector('.sos-mine'); box.hidden = !mine.length;
@@ -175,14 +182,17 @@ function sosInit(){
   });
   draw();
   root.querySelector('.sos-btn').addEventListener('click', async () => {
-    const st = picker.state; if(!st.slot || !col) return;
-    const key = st.date + '-' + st.slot; if(sent.includes(key)) return;
+    const st = picker.state; if(!st.slots.length || !col) return;
     root.querySelector('.sos-btn').disabled = true;
-    try{
-      await col.doc(st.date).set({['h' + parseInt(st.slot)]: firebase.firestore.FieldValue.increment(1)}, {merge:true});
-      sent = [...sent, key].slice(-200); try{ localStorage.setItem('copSosSent', JSON.stringify(sent)); }catch(e){}
-      draw();
-    }catch(err){ draw(); }
+    // 고른 시간마다 하나씩 올려요 (규칙상 한 번에 한 시간씩), 이미 예약한 시간은 건너뛰어요
+    for(const v of st.slots){
+      const key = st.date + '-' + v; if(sent.includes(key)) continue;
+      try{
+        await col.doc(st.date).set({['h' + parseInt(v)]: firebase.firestore.FieldValue.increment(1)}, {merge:true});
+        sent = [...sent, key].slice(-200); try{ localStorage.setItem('copSosSent', JSON.stringify(sent)); }catch(e){}
+      }catch(err){ break; }
+    }
+    draw();
   });
   // 고른 날짜·시간을 그대로 모임 만들기에 넘겨요
   root.querySelector('.sos-make').addEventListener('click', e => {
