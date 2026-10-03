@@ -165,7 +165,6 @@ aside h2{margin:0;font-size:16px;font-weight:600}
         <p>상자 터널을 기어서 통과하고, 차가운 얼음을 만지고, 이불 위에서 양말 공을 튀기는 것처럼 집에서는 잘 못 해 본 경험이에요. 매번 새로운 걸 골라 아이가 여러 가지를 겪어 보게 해요.</p>
       </div>
       <p class="picked-line" id="devPicked" hidden></p>
-      <div class="toolbar"><button class="chip" id="random">🎲 재료 겹치게 짝지어 줘</button></div>
       <button class="fold" type="button" data-fold="dev" aria-expanded="false" aria-controls="devBody"></button>
       <div class="fold-body" id="devBody" hidden>
       <div class="match" id="match" hidden>
@@ -353,17 +352,6 @@ document.addEventListener('click', e => {
   if(rm){ state[rm.dataset.remove] = null; save(); render(); }
 });
 $('#fresh').onclick = e => { state.fresh = !state.fresh; e.currentTarget.setAttribute('aria-pressed', state.fresh); render(); };
-$('#random').onclick = () => {
-  // ① 혼자서도 할 수 있어요는 고른 게 있으면 그대로 두고(반복), 없으면 하나 골라요. 발달 놀이는 안 해 본 것 중 재료가 가장 많이 겹치는 것
-  if(!state.habit) state.habit = habits[Math.floor(Math.random()*habits.length)].id;
-  const h = byId(state.habit);
-  const pool = devs.filter(p => !p.used && (state.cat==='전체' || p.cat===state.cat) && p.id!==state.dev);
-  const best = Math.max(0, ...pool.map(p => shared(p,h).length));
-  const top = pool.filter(p => shared(p,h).length===best);
-  state.dev = top.length ? top[Math.floor(Math.random()*top.length)].id : null;
-  save(); render(); openTray(true);
-  flash(best ? `재료가 겹치는 놀이로 골랐어요. 다시 누르면 다른 걸 골라요.` : '겹치는 재료가 있는 놀이가 없어서 새 놀이로 골랐어요.');
-};
 $('#clear').onclick = () => { state.habit = null; state.dev = null; save(); render(); };
 $('#copy').onclick = async () => {
   if(!state.habit && !state.dev){ flash('먼저 놀이를 골라 주세요.'); return; }
