@@ -1,5 +1,5 @@
 /* 공동육아 놀이 목록 — 놀이를 추가·수정할 때는 이 파일만 고치면 돼요.
-   src: daycare=어린이집 계획안 응용(🏫), kr=국내 공공자료(원문 미확인), intl=해외 자료(원문 미확인), past=지난 회차, life=직접 제안
+   src: daycare=어린이집 계획안 응용(🏫), book=보건복지부·한국보육진흥원 「배움을 놀이에서 찾다」 영아놀이 자료집(원문 확인), kr=국내 공공자료(원문 미확인), intl=해외 자료(원문 미확인), past=지난 회차, life=직접 제안
    used: 해 본 회차 날짜. 공지를 낸 뒤 여기에 적어 주세요. */
 const PLAYS = [
   {id:'box-mystery', name:'궁금이 상자', cat:'넣고 빼기', how:'빈 티슈 상자 속 손수건·양말을 쏙쏙 뽑아요.', items:['빈 티슈 상자','손수건','양말'], src:'daycare', orig:'궁금이 상자 안에 뭐가 있을까?', used:'10/05'},
@@ -25,19 +25,19 @@ const PLAYS = [
   {id:'hand-song', name:'동요 손유희', cat:'소리·노래', how:'스피커로 동요를 틀고 손동작 따라 하기.', items:['블루투스 스피커'], src:'daycare', orig:'동요 따라 손유희', song:'간다 간다'},
 
   {id:'basket-boat', name:'바구니 배 타기', cat:'몸으로', how:'빈 빨래 바구니에 앉혀 천천히 밀며 "배 타고 가요".', items:['빨래 바구니'], src:'kr', orig:'정리 바구니가 배처럼 움직이는 놀이'},
-  {id:'cloth-peek', name:'천 뒤 까꿍', cat:'까꿍·찾기', how:'큰 보자기를 덮었다 걷으며 까꿍.', items:['보자기','손수건'], src:'kr', orig:'천으로 놀아요'},
+  {id:'cloth-peek', name:'천 뒤 까꿍', cat:'까꿍·찾기', how:'큰 보자기·이불로 얼굴을 가렸다가 "까꿍!" 아이가 스스로 가리면 "어디 갔지?" 하고 찾아 줘요.', items:['보자기','이불'], src:'book', orig:'이리 봐도 까꿍, 저리 봐도 까꿍'},
   {id:'newspaper', name:'신문지 구기고 찢기', cat:'넣고 빼기', how:'바스락 소리 듣고 구기고 찢어요. 조각은 입에 넣지 않게 바로 치워요.', items:['신문지'], src:'kr', orig:'신문지 놀이'},
   {id:'tube-roll', name:'휴지심 굴리고 쌓기', cat:'넣고 빼기', how:'휴지심 여러 개를 굴리고 세워 쌓아요.', items:['휴지심'], src:'kr', orig:'휴지심 놀이'},
   {id:'cushion-stones', name:'방석 징검다리', cat:'몸으로', how:'방석을 띄엄띄엄 깔고 기어서 건너요.', items:['방석'], src:'kr', orig:'가족 물건 활용 놀이'},
-  {id:'book-together', name:'그림책 함께 보기', cat:'흉내·책', how:'모여 앉아 한 권을 보며 그림 속 물건 이름 짚기.', items:['그림책'], src:'kr', orig:'북스타트 그림책 읽어 주기'},
+  {id:'book-together', name:'그림책 함께 보기', cat:'흉내·책', how:'처음부터 끝까지 다 읽지 않아도 돼요. 아이가 가리키는 그림을 같이 보며 이야기 나눠요.', items:['그림책'], src:'book', orig:'그림책으로 소통해요'},
 
   {id:'obstacle', name:'장애물 코스', cat:'몸으로', how:'상자 통과 → 쿠션 넘기 → 이불 더미 → 부모 품으로.', items:['택배 상자','쿠션','이불'], src:'intl', orig:'Toddler obstacle course'},
   {id:'popcorn', name:'팝콘 놀이', cat:'몸으로', how:'이불 위 양말 공을 여럿이 흔들어 "팝콘!" 떨어지면 다시 올려요.', items:['이불','양말'], src:'intl', orig:'Popcorn Game'},
   {id:'scarf-tube', name:'심에서 손수건 빼기', cat:'넣고 빼기', how:'키친타월 심에 손수건을 끼워 두면 아이가 잡아당겨 빼요.', items:['키친타월 심','손수건'], src:'intl', orig:'Scarf through a tube'},
   {id:'fill-dump', name:'담고 쏟기', cat:'넣고 빼기', how:'신문지 공을 바구니에 담았다가 상자에 와르르 쏟아요.', items:['신문지','바구니','택배 상자'], src:'intl', orig:'Fill and Dump'},
   {id:'loud-quiet', name:'시끄러운 통·조용한 통', cat:'소리·노래', how:'플라스틱 컵 통과 행주 통을 흔들어 소리 비교.', items:['통 2개','플라스틱 컵','행주'], src:'intl', orig:'Loud vs quiet buckets'},
-  {id:'box-blocks', name:'상자 블록 쌓기', cat:'넣고 빼기', how:'크기 다른 상자를 큰 블록처럼 쌓고 무너뜨려요.', items:['택배 상자'], src:'intl', orig:'Build with boxes'},
-  {id:'cozy-box', name:'상자 속 아늑한 책방', cat:'흉내·책', how:'큰 상자 안에 담요·인형을 넣고 같이 그림책 보기.', items:['택배 상자','담요','인형','그림책'], src:'intl', orig:'Cozy corner'},
+  {id:'box-blocks', name:'상자 쌓고 와르르', cat:'넣고 빼기', how:'크기 다른 상자·통을 높이 쌓고 와르르 무너뜨려요. "키만큼 높이 쌓았네!"', items:['택배 상자','빈 통'], src:'book', orig:'상자로 놀아요'},
+  {id:'cozy-box', name:'상자 집에 쏙', cat:'흉내·책', how:'아이가 들어갈 만한 큰 상자에 쏙 들어가 앉아요. 친구와 얼굴 마주 보기, 담요 깔고 그림책 보기.', items:['큰 택배 상자','담요','그림책'], src:'book', orig:'상자로 놀아요'},
   {id:'dress-up', name:'소품 흉내 놀이', cat:'흉내·책', how:'스카프 두르고 가방 메고 엄마 아빠 흉내.', items:['스카프','가방'], src:'intl', orig:'Dress-up props'},
   {id:'hide-seek', name:'수건 밑 인형 찾기', cat:'까꿍·찾기', how:'수건 밑에 인형을 숨기고 "어디 갔지?" 찾아요.', items:['수건','인형'], src:'intl', orig:'Hide and Search'},
   {id:'spoon-move', name:'숟가락질', say:'숟가락 해 볼래?', cat:'혼자서도 할 수 있어요', how:'큰 숟가락·국자로 양말 공을 이 그릇에서 저 그릇으로 옮겨요.', items:['큰 숟가락','국자','그릇 2개','양말'], src:'life'},
@@ -54,6 +54,13 @@ const PLAYS = [
   {id:'ice-touch', name:'얼음 만져 보기', cat:'감각', how:'대야에 큰 얼음덩어리를 넣고 만지고 밀어 봐요. "차가워!" 작은 조각은 치워요.', items:['대야','큰 얼음(컵에 얼린 것)','수건'], src:'life', water:true},
   {id:'ice-bag', name:'얼음 지퍼백 주무르기', cat:'감각', how:'얼음과 물을 지퍼백에 넣고 꽉 잠가 손바닥으로 눌러 봐요.', items:['지퍼백','얼음','수건'], src:'life'},
   {id:'textures', name:'여러 촉감 만져 보기', cat:'감각', how:'수건, 비닐봉지, 냄비 뚜껑, 털 인형을 차례로 만지며 "보들보들, 바스락, 차가워".', items:['수건','비닐봉지','냄비 뚜껑','인형'], src:'life'},
+  {id:'hole-box', name:'구멍 상자 드나들기', cat:'몸으로', how:'큰 상자 옆면에 몸이 들어갈 만한 구멍을 뚫어 기어서 들어갔다 나와요. "개미처럼 쏙!"', items:['큰 택배 상자'], src:'book', orig:'개미와 구멍'},
+  {id:'cloth-house', name:'천으로 집 만들기', cat:'까꿍·찾기', how:'의자나 탁자에 큰 천을 덮어 그 안에 친구와 같이 숨어요. 천을 깔고 앉아 엉덩이로 밀기도 해요.', items:['이불','보자기'], src:'book', orig:'천으로 무엇이든 할 수 있어'},
+  {id:'book-build', name:'그림책 세워 집 만들기', cat:'흉내·책', how:'두꺼운 그림책을 세워 터널·산·집을 만들어요. 넘어지면 "어? 넘어졌네" 하고 다시 세워요.', items:['두꺼운 그림책'], src:'book', orig:'그림책으로 놀이해요'},
+  {id:'bubble-wrap', name:'뽁뽁이 소리 놀이', cat:'소리·노래', how:'뽁뽁이를 바닥에 깔고 밟거나 손으로 눌러 톡톡 소리를 내요. 친구에게도 들려줘요. 입에 넣지 않게 큰 판으로만.', items:['뽁뽁이(에어캡)'], src:'book', orig:'소리와 경사로 놀이 사례'},
+  {id:'lullaby-wake', name:'자장자장 꼬끼오', cat:'소리·노래', how:'자장가가 나오면 누워서 자는 척, 노래가 끝나면 "꼬끼오!" 하고 일어나요.', items:['블루투스 스피커'], src:'book', orig:'소리와 경사로 놀이 사례', song:'자장가'},
+  {id:'car-wash', name:'자동차 세차', say:'자동차 닦아 줄래?', cat:'혼자서도 할 수 있어요', how:'수건으로 장난감 자동차를 쓱싹쓱싹 닦아요. "세차해 줘서 반짝반짝하네!"', items:['수건','장난감 자동차'], src:'book', orig:'운전도 하고, 세차도 하고'},
+  {id:'baby-feed', name:'아기 밥 먹이기', say:'아기 밥 줄래?', cat:'혼자서도 할 수 있어요', how:'빈 그릇에서 숟가락으로 떠서 인형에게 "아~" 먹여 줘요. 같은 동작을 여러 번 반복해도 좋아요.', items:['인형','빈 그릇','큰 숟가락'], src:'book', orig:'냠냠 아이스크림'},
   {id:'cup-stack', name:'컵·통 쌓기', cat:'넣고 빼기', how:'플라스틱 컵, 빈 반찬통을 쌓고 겹쳐 넣어요.', items:['플라스틱 컵','빈 반찬통'], src:'intl', orig:'Stacking cups'},
 ];
 const CATS = ['전체','몸으로','까꿍·찾기','넣고 빼기','소리·노래','감각','흉내·책','혼자서도 할 수 있어요','마무리'];
@@ -66,4 +73,4 @@ const CAT_DESC = {
   '혼자서도 할 수 있어요':'나중에 아이가 혼자서 하게 될 일을 "~해 볼래?" 하고 같이 해 봐요. 같은 걸 몇 주 반복해요',
   '감각':'차갑고, 보들보들하고, 바스락거리는 걸 만져 보는 놀이',
   '마무리':'놀잇감을 함께 담으며 끝내기'};
-const SRC_TAG = {daycare:'🏫 어린이집', kr:'국내 자료 · 원문 미확인', intl:'해외 자료 · 원문 미확인', past:'지난 회차', life:'직접 제안'};
+const SRC_TAG = {daycare:'🏫 어린이집', book:'📘 영아놀이 자료집', kr:'국내 자료 참고', intl:'해외 자료 참고', past:'지난 회차', life:'직접 제안'};

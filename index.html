@@ -252,7 +252,7 @@ function cardHtml(p, slot){
   const same = slot==='dev' ? shared(p, byId(state.habit)) : shared(p, byId(state.dev));
   const tags = [
     same.length ? `<span class="tag same">재료 같음 · ${same.map(esc).join(', ')}</span>` : '',
-    `<span class="tag${p.src==='kr'||p.src==='intl'?' warn':''}">${SRC_TAG[p.src]}</span>`,
+    `<span class="tag">${SRC_TAG[p.src]}</span>`,
     p.used ? `<span class="tag done">${p.used} 해 봄</span>` : '',
     p.water ? `<span class="tag">💧 물 · 수건 깔기</span>` : '',
     p.song ? `<span class="tag">ex) ${esc(p.song)}</span>` : ''].join('');
@@ -260,7 +260,7 @@ function cardHtml(p, slot){
     <div class="card-top"><h3>${esc(p.name)}</h3><span class="check" aria-hidden="true">✓</span></div>
     ${p.say ? `<p class="say">“${esc(p.say)}”</p>` : ''}
     <p class="how">${esc(p.how)}</p>
-    ${p.orig ? `<p class="orig">${p.src==='daycare'?'🏫 ':'원래 이름 · '}${esc(p.orig)}</p>` : ''}
+    ${p.orig ? `<p class="orig">${({daycare:'🏫 ', book:'📘 '})[p.src] || '원래 이름 · '}${esc(p.orig)}</p>` : ''}
     <p class="orig">준비물 · ${p.items.map(esc).join(', ')}</p>
     <div class="tags">${tags}</div></button>`;
 }
