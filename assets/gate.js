@@ -19,6 +19,7 @@ const GATE_STORY = `        <div class="g-story">
           <li>🆘 <b>힘든 날</b>엔 이름 없이 SOS만 꾹</li>
           <li>👀 SOS가 <b>몰린 시간</b>은 모두가 봐요</li>
           <li>🙌 <b>용기 낸 한 명</b>이 모임을 열어요</li>
+          <li>📲 웹앱이라 <b>홈 화면에 설치</b>해서 앱처럼 써요</li>
         </ul>`;
 
 function gateCss(){
@@ -42,6 +43,7 @@ function gateCss(){
     #gate .g-how b{color:var(--accent-ink,#1c7276)}
     #gate .g-close{position:absolute;top:10px;right:10px;width:36px;height:36px;padding:0!important;border-radius:50%!important;background:var(--tag,#efefef)!important;color:var(--fg,#22282a)!important;font-size:18px!important}
     #gate .g-card{position:relative}
+    #gate .g-link{color:var(--accent-ink,#1c7276);font-size:14px;font-weight:600}
     #gate .g-pw{margin-top:4px;border-top:1px solid var(--line,#e3e3e5);padding-top:14px}`;
   css.id = 'gateCss'; document.head.appendChild(css);
 }
@@ -57,10 +59,11 @@ function showIntro(){
       <h1>공동육아 SOS 🆘</h1>
 ${GATE_STORY}
       <button type="button" class="g-ok">시작하기</button>
+      <a class="g-link" href="index.html#install">📲 홈 화면에 설치하는 방법 보기</a>
     </div>`;
   const close = () => { box.remove(); document.removeEventListener('keydown', esc); };
   const esc = e => { if(e.key === 'Escape') close(); };
-  box.addEventListener('click', e => { if(e.target === box || e.target.closest('.g-close, .g-ok')) close(); });
+  box.addEventListener('click', e => { if(e.target === box || e.target.closest('.g-close, .g-ok, .g-link')) close(); });
   document.addEventListener('keydown', esc);
   document.body.appendChild(box);
   box.querySelector('.g-ok').focus();
